@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Careers Platform - Frontend (Next.js)
 
-## Getting Started
+## Overview
 
-First, run the development server:
+This project is developed using **Next.js**, with automatic routing based on the file structure within the `src/app/` directory. Each folder corresponds to a URL path, and every `page.tsx` file within those folders defines the content for that specific route.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+For example:
+- The `page.tsx` file in `/src/app/about/` will render when you navigate to `/about` in the browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Key Routing Folders
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `src/app/positions/page.tsx` → `/positions`
 
-## Learn More
+### Components
 
-To learn more about Next.js, take a look at the following resources:
+- Page-specific components are housed in the `src/app/components/(page)` directory.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Local Setup and Execution
 
-## Deploy on Vercel
+1. Fork the repository: [NUS Fintech Society Careers Platform](https://github.com/NUS-Fintech-Society/SD_Careers_Platform)
+2. Clone the repository: `git clone (URL)`
+3. Install dependencies: `npm install`
+4. Run the development server: `npm run dev`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## GitHub Workflow
+
+1. Stage changes: `git add *`
+2. Commit with a message: `git commit -m "(message)"`
+3. Push to the repository: `git push`
+4. Submit a pull request
