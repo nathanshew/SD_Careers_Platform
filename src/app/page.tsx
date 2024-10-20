@@ -12,7 +12,7 @@ export default function Home() {
           height={500}
           priority
         />
-        <h1 className="text-4xl font-bold text-center">NUS Fintech Society Careers Page</h1>
+        <h1 className="text-4xl font-bold text-center">NUS Fintech Society Careers Pages</h1>
       </main>
     </div>
   );
