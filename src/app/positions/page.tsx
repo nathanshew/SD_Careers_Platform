@@ -24,7 +24,7 @@ export default function JobApplication() {
             <a href="/about-us">About Us</a>
           </nav>
         </div>
-        <div>Welcome Back Shawn!</div>
+        <div>Welcome Back Shawnn!</div>
       </header>
 
       {/* Job Role Title */}
