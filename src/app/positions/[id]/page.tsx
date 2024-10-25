@@ -19,25 +19,28 @@ export default function JobApplication() {
     if (jobData !== undefined) {
         return (
         
-        <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-body">
         <NavBar/>
+        {/* Back to All Roles Button */}
+        <GoBack/>
         {/* Job Role Title */}
-        <section className="text-center mb-8">
-            <h1 className="text-4xl font-bold">{jobData.title}</h1>
-            <p className="text-lg">{jobData.department} - {jobData.semester}</p>
-            <p className="text-lg">{jobData.positionsAvailable}</p>
+        <section className="text-center mb-8 flex flex-col items-center justify-center">
+            <h1 className="font-header">{jobData.title}</h1>
+            <div className="text-xl bg-gray-200 text-gray-600 rounded-full mt-4 px-16 py-2 w-fit shadow-lg">
+              {jobData.department}  |  {jobData.semester}  |  {jobData.positionsAvailable}
+            </div>
         </section>
 
         {/* Overview and Application Tabs */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-10 mt-10">
             <button
-            className={`px-4 py-2 border-b-2 ${activeTab === "overview" ? "border-orange-500 text-orange-500" : "border-transparent hover:border-gray-300"}`}
+            className={`text-3xl px-48 py-2 border-b-2 ${activeTab === "overview" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("overview")}
             >
             Overview
             </button>
             <button
-            className={`px-4 py-2 border-b-2 ${activeTab === "application" ? "border-orange-500 text-orange-500" : "border-transparent hover:border-gray-300"}`}
+            className={`text-3xl px-48 py-2 border-b-2 ${activeTab === "application" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("application")}
             >
             Application
@@ -50,9 +53,6 @@ export default function JobApplication() {
         ) : (
             <Application {...jobData}/>
         )}
-
-        {/* Back to All Roles Button */}
-        <GoBack/>
         <Footer/>
         </div>
     );
@@ -66,12 +66,12 @@ function Overview(jobData: JobDataType) {
   return (
   <div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h2 className="text-xl font-bold text-black">What you will do</h2>
-        <p className="text-gray-700">{jobData.description}</p>
+        <h3 className=" text-black">What you will do</h3>
+        <div className="text-gray-700 text-xl">{jobData.description}</div>
     </div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h2 className="text-xl font-bold text-black">Who we are looking for</h2>
-        <p className="text-gray-700">{jobData.requirements}</p>
+        <h3 className=" text-black">Who we are looking for</h3>
+        <div className="text-gray-700 text-xl">{jobData.requirements}</div>
     </div>
   </div>
   )
@@ -79,7 +79,7 @@ function Overview(jobData: JobDataType) {
 
 function Application(jobData: JobDataType) {
   return (
-     <form className="max-w-lg mx-auto">
+     <form className="max-w-lg mx-auto font-body text-xl">
           <div className="mb-4">
             <label className="block mb-2">Full Name</label>
             <input type="text" placeholder="e.g. Shawn Tan" className="w-full p-2 border border-gray-300 rounded" />
@@ -104,6 +104,10 @@ function Application(jobData: JobDataType) {
             <label className="block mb-2">Why do you want to join NFS as {jobData.title}?</label>
             <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
           </div>
+          <div className="w-full flex items-center justify-center">
+            <button className="bg-orange-500 text-white rounded-full text-2xl px-10 py-2">Submit</button>
+          </div>
+          
         </form>
   )
 }
@@ -111,7 +115,7 @@ function Application(jobData: JobDataType) {
 function GoBack() {
   return (
     <div className="text-right text-black mt-8">
-      <button className="px-4 py-2 bg-gray-200 rounded">
+      <button className="px-4 py-2 bg-blue-200 text-blue-950 rounded-full">
         <Link href = {`/positions/`}>Back to all roles</Link>
       </button>
     </div>
