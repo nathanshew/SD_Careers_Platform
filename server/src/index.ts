@@ -1,8 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import applicantRoutes from './routes/applicant';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
+const HOST = process.env.HOST || "localhost";
 
 app.use(express.json());
 app.use('/applicant', applicantRoutes);
@@ -17,6 +21,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).send('Something went wrong');
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server running at http://${HOST}:${PORT}`);
 });
