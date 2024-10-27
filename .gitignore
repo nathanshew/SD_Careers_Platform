@@ -37,4 +37,5 @@ next-env.d.ts
 
 # server
 server/node_modules
+server/.env
 server/dist
