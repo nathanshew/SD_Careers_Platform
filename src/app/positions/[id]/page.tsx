@@ -25,8 +25,8 @@ export default function JobApplication() {
         <GoBack/>
         {/* Job Role Title */}
         <section className="text-center mb-8 flex flex-col items-center justify-center">
-            <h1 className="font-header">{jobData.title}</h1>
-            <div className="text-xl bg-gray-200 text-gray-600 rounded-full mt-4 px-16 py-2 w-fit shadow-lg">
+            <div className="font-header md:text-[48px] text-[32px] font-bold">{jobData.title}</div>
+            <div className="text-sm sm:text-base lg:text-xl bg-gray-200 text-gray-600 rounded-full mt-4 px-16 py-2 w-fit shadow-lg">
               {jobData.department}  |  {jobData.semester}  |  {jobData.positionsAvailable}
             </div>
         </section>
@@ -34,13 +34,13 @@ export default function JobApplication() {
         {/* Overview and Application Tabs */}
         <div className="flex justify-center mb-10 mt-10">
             <button
-            className={`text-3xl px-48 py-2 border-b-2 ${activeTab === "overview" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
+            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 border-b-2 ${activeTab === "overview" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("overview")}
             >
             Overview
             </button>
             <button
-            className={`text-3xl px-48 py-2 border-b-2 ${activeTab === "application" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
+            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 py-2 border-b-2 ${activeTab === "application" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("application")}
             >
             Application
@@ -66,11 +66,11 @@ function Overview(jobData: JobDataType) {
   return (
   <div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h3 className=" text-black">What you will do</h3>
+        <h3 className="font-header text-black">What you will do</h3>
         <div className="text-gray-700 text-xl">{jobData.description}</div>
     </div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h3 className=" text-black">Who we are looking for</h3>
+        <h3 className="font-header text-black">Who we are looking for</h3>
         <div className="text-gray-700 text-xl">{jobData.requirements}</div>
     </div>
   </div>
@@ -79,33 +79,33 @@ function Overview(jobData: JobDataType) {
 
 function Application(jobData: JobDataType) {
   return (
-     <form className="max-w-lg mx-auto font-body text-xl">
+     <form className="max-w-lg mx-auto font-body md:text-xl text-base">
           <div className="mb-4">
-            <label className="block mb-2">Full Name</label>
+            <label className="font-header block mb-2">Full Name</label>
             <input type="text" placeholder="e.g. Shawn Tan" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Faculty / Major</label>
+            <label className="font-header block mb-2">Faculty / Major</label>
             <input type="text" placeholder="e.g. SoC / CS" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Year of Study</label>
+            <label className="font-header block mb-2">Year of Study</label>
             <input type="text" placeholder="e.g. Year 1" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Linkedin URL</label>
+            <label className="font-header block mb-2">Linkedin URL</label>
             <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Resume link</label>
+            <label className="font-header block mb-2">Resume link</label>
             <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="mb-4">
-            <label className="block mb-2">Why do you want to join NFS as {jobData.title}?</label>
+            <label className="font-header block mb-2">Why do you want to join NFS as {jobData.title}?</label>
             <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
           </div>
-          <div className="w-full flex items-center justify-center">
-            <button className="bg-orange-500 text-white rounded-full text-2xl px-10 py-2">Submit</button>
+          <div className="w-full font-header flex items-center justify-center">
+            <button className="bg-orange-500 text-white rounded-full px-10 py-2">Submit</button>
           </div>
           
         </form>
@@ -115,7 +115,7 @@ function Application(jobData: JobDataType) {
 function GoBack() {
   return (
     <div className="text-right text-black mt-8">
-      <button className="px-4 py-2 bg-blue-200 text-blue-950 rounded-full">
+      <button className="text-sm px-4 py-2 my-5 bg-blue-200 text-blue-950 rounded-full">
         <Link href = {`/positions/`}>Back to all roles</Link>
       </button>
     </div>
