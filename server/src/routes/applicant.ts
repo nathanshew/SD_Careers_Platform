@@ -13,6 +13,7 @@ interface ApplicantInput {
 }
 
 // Create a new applicant
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 router.post("/", async (req: Request<{}, {}, ApplicantInput>, res: Response) => {
   logRequest(req);
   const { username, email, password } = req.body;
@@ -65,7 +66,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update an applicant by ID
-router.put("/:id", async (req: Request<{ id: string }, {}, ApplicantInput>, res: Response) => {
+router.put("/:id", async (req: Request<{ id: string }, object, ApplicantInput>, res: Response) => {
   logRequest(req);
   const { id } = req.params;
   const { username, email, password } = req.body;

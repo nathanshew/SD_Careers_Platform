@@ -1,20 +1,53 @@
-datasource db {
-  url      = env("DATABASE_URL")
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
 model Applicant {
-  applicant_id    Int      @id @default(autoincrement()) // Primary key with auto-increment
-  username        String
-  email           String   @unique // Unique email field
-  password        String   // Hashed password
+  applicant_id Int    @id @default(autoincrement())
+  username     String
+  email        String @unique
+  password     String
+}
+
+model Admin {
+  admin_id Int    @id @default(autoincrement())
+  username String
+  email    String @unique
+  password String
+
+  // Relation to Job
+  jobs      Job[]
 }
 
 model Department {
-  department_id   Int      @id @default(autoincrement()) // Primary key with auto-increment
-  department_name String   @unique
+  department_id   Int    @id @default(autoincrement())
+  department_name String @unique
+
+  // Relation to Job
+  jobs            Job[]
+}
+
+model Job {
+  job_id        Int       @id @default(autoincrement())
+  title         String
+  department_id Int
+  description   String
+  semester      String
+  deadline      DateTime
+  status        JobStatus
+  created_by    Int
+
+  // Relations
+  department Department @relation(fields: [department_id], references: [department_id])
+  admin      Admin      @relation(fields: [created_by], references: [admin_id])
+}
+
+enum JobStatus {
+  open
+  closed
 }
