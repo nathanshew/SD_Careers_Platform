@@ -34,13 +34,13 @@ export default function JobApplication() {
         {/* Overview and Application Tabs */}
         <div className="flex justify-center mb-10 mt-10">
             <button
-            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 border-b-2 ${activeTab === "overview" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
+            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 border-b-2 ${activeTab === "overview" ? "border-standard-orange text-standard-orange font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("overview")}
             >
             Overview
             </button>
             <button
-            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 py-2 border-b-2 ${activeTab === "application" ? "border-orange-500 text-orange-500 font-semibold" : "border-transparent hover:border-gray-300"}`}
+            className={`font-header text-xl lg:text-2xl lg:px-48 md:px-24 px-8 py-2 border-b-2 ${activeTab === "application" ? "border-standard-orange text-standard-orange font-semibold" : "border-transparent hover:border-gray-300"}`}
             onClick={() => setActiveTab("application")}
             >
             Application
@@ -105,7 +105,7 @@ function Application(jobData: JobDataType) {
             <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
           </div>
           <div className="w-full font-header flex items-center justify-center">
-            <button className="bg-orange-500 text-white rounded-full px-10 py-2">Submit</button>
+            <button className="bg-button-orange text-white rounded-full px-10 py-2">Submit</button>
           </div>
           
         </form>
