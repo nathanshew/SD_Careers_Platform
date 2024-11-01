@@ -1,5 +1,7 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response} from 'express';
 import applicantRoutes from './routes/applicant';
+import adminRoutes from './routes/admin';
+import jobRoutes from './routes/job';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,13 +12,15 @@ const HOST = process.env.HOST || "localhost";
 
 app.use(express.json());
 app.use('/applicant', applicantRoutes);
+app.use('/admin', adminRoutes);
+app.use('/job', jobRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Express!');
 });
 
 // Add this error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong');
 });
