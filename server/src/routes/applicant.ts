@@ -1,32 +1,40 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { createApplicantSchema, editApplicantSchema } from "../validators/applicant";
 import { logRequest } from "../utils/logUtil";
+import * as yup from 'yup';
 
 const prisma = new PrismaClient();
 const router = Router();
 
-// Define the type for applicant input
-interface ApplicantInput {
-  username: string;
-  email: string;
-  password: string;
-}
-
 // Create a new applicant
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-router.post("/", async (req: Request<{}, {}, ApplicantInput>, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   logRequest(req);
-  const { username, email, password } = req.body;
   try {
-    console.log(`Creating applicant with email: ${email}`);
-    const applicant = await prisma.applicant.create({
-      data: { username, email, password },
+    console.log(`Validating input data`);
+    const validatedData = await createApplicantSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
     });
+
+    console.log(`Creating applicant with email: ${validatedData.email}`);
+    const applicant = await prisma.applicant.create({
+      data: validatedData,
+    });
+
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
     res.status(201).json(applicant);
   } catch (error) {
-    console.error("Error creating applicant:", error);
-    res.status(400).json({ error: "Error creating applicant" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error creating applicant:", error);
+      res.status(400).json({ error: "Error creating applicant" });
+    }
   }
 });
 
@@ -66,21 +74,35 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update an applicant by ID
-router.put("/:id", async (req: Request<{ id: string }, object, ApplicantInput>, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   logRequest(req);
   const { id } = req.params;
-  const { username, email, password } = req.body;
   try {
+    console.log(`Validating input data`);
+    const validatedData = await editApplicantSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+    });
+
     console.log(`Updating applicant with ID: ${id}`);
     const updatedApplicant = await prisma.applicant.update({
       where: { applicant_id: Number(id) },
-      data: { username, email, password },
+      data: validatedData,
     });
+
     console.log(`Applicant with ID ${id} updated`);
     res.json(updatedApplicant);
   } catch (error) {
-    console.error("Error updating applicant:", error);
-    res.status(400).json({ error: "Error updating applicant" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error updating applicant:", error);
+      res.status(400).json({ error: "Error updating applicant" });
+    }
   }
 });
 

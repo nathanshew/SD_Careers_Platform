@@ -1,36 +1,41 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { createJobSchema, editJobSchema } from "../validators/job";
 import { logRequest } from "../utils/logUtil";
+import * as yup from 'yup';
 
 const prisma = new PrismaClient();
 const router = Router();
 
-// Define the type for job input
-interface JobInput {
-  title: string;
-  department_id: number;
-  description: string;
-  semester: string;
-  deadline: Date;
-  status: 'open' | 'closed';
-  created_by: number;
-}
-
 // Create a new job
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-router.post("/", async (req: Request<{}, {}, JobInput>, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   logRequest(req);
-  const { title, department_id, description, semester, deadline, status, created_by } = req.body;
   try {
-    console.log(`Creating job with title: ${title}`);
-    const job = await prisma.job.create({
-      data: { title, department_id, description, semester, deadline, status, created_by },
+    console.log(`Validating input data`);
+    const validatedData = await createJobSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
     });
+
+    console.log(`Creating job with title: ${validatedData.title}`);
+    const job = await prisma.job.create({
+      data: validatedData,
+    });
+
     console.log(`Job created with ID: ${job.job_id}`);
     res.status(201).json(job);
+
   } catch (error) {
-    console.error("Error creating job:", error);
-    res.status(400).json({ error: "Error creating job" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error creating job:", error);
+      res.status(400).json({ error: "Error creating job" });
+    }
   }
 });
 
@@ -70,22 +75,35 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update a job by ID
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-router.put("/:id", async (req: Request<{ id: string }, {}, JobInput>, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   logRequest(req);
   const { id } = req.params;
-  const { title, department_id, description, semester, deadline, status, created_by } = req.body;
   try {
+    console.log(`Validating input data`);
+    const validatedData = await editJobSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+
     console.log(`Updating job with ID: ${id}`);
     const updatedJob = await prisma.job.update({
       where: { job_id: Number(id) },
-      data: { title, department_id, description, semester, deadline, status, created_by },
+      data: validatedData,
     });
+
     console.log(`Job with ID ${id} updated`);
     res.json(updatedJob);
   } catch (error) {
-    console.error("Error updating job:", error);
-    res.status(400).json({ error: "Error updating job" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error updating job:", error);
+      res.status(400).json({ error: "Error updating job" });
+    }
   }
 });
 
@@ -98,6 +116,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     await prisma.job.delete({
       where: { job_id: Number(id) },
     });
+
     console.log(`Job with ID ${id} deleted`);
     res.status(204).end();
   } catch (error) {

@@ -1,32 +1,43 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { createAdminSchema, editAdminSchema } from "../validators/admin";
 import { logRequest } from "../utils/logUtil";
+import * as yup from 'yup';
 
 const prisma = new PrismaClient();
 const router = Router();
 
-// Define the type for admin input
-interface AdminInput {
-  username: string;
-  email: string;
-  password: string;
-}
-
 // Create a new admin
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-router.post("/", async (req: Request<{}, {}, AdminInput>, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
   logRequest(req);
-  const { username, email, password } = req.body;
   try {
-    console.log(`Creating admin with email: ${email}`);
-    const admin = await prisma.admin.create({
-      data: { username, email, password },
+    console.log(`Validating input data`);
+    const validatedData = await createAdminSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
     });
+
+    console.log(`Creating admin with email: ${validatedData.email}`);
+    const admin = await prisma.admin.create({
+      data: validatedData,
+    });
+
     console.log(`Admin created with ID: ${admin.admin_id}`);
     res.status(201).json(admin);
   } catch (error) {
-    console.error("Error creating admin:", error);
-    res.status(400).json({ error: "Error creating admin" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      // Log the error on the server
+      console.error("Error creating admin:", error);
+
+      // Send a JSON error response to the client
+      res.status(400).json({ error: "Error creating admin" });
+    }
   }
 });
 
@@ -66,21 +77,35 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update an admin by ID
-router.put("/:id", async (req: Request<{ id: string }, object, AdminInput>, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   logRequest(req);
   const { id } = req.params;
-  const { username, email, password } = req.body;
   try {
+    console.log(`Validating input data`);
+    const validatedData = await editAdminSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+    });
+
     console.log(`Updating admin with ID: ${id}`);
     const updatedAdmin = await prisma.admin.update({
       where: { admin_id: Number(id) },
-      data: { username, email, password },
+      data: validatedData,
     });
+
     console.log(`Admin with ID ${id} updated`);
     res.json(updatedAdmin);
   } catch (error) {
-    console.error("Error updating admin:", error);
-    res.status(400).json({ error: "Error updating admin" });
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error updating admin:", error);
+      res.status(400).json({ error: "Error updating admin" });
+    }
   }
 });
 

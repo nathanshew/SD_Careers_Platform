@@ -12,6 +12,9 @@ model Applicant {
   username     String
   email        String @unique
   password     String
+
+  // Relation to Application
+  applications Application[]
 }
 
 model Admin {
@@ -45,9 +48,39 @@ model Job {
   // Relations
   department Department @relation(fields: [department_id], references: [department_id])
   admin      Admin      @relation(fields: [created_by], references: [admin_id])
+  applications Application[]
+}
+
+model Application {
+  application_id  Int                @id @default(autoincrement())
+  applicant_id    Int
+  job_id          Int
+  status          ApplicationStatus
+  name            String
+  telegram        String
+  phone           String
+  year            Int
+  major           String
+  faculty         String
+  linkedin_url    String?           // optional
+  resume_url      String
+  applicant_desc  String
+
+  // Relations
+  applicant Applicant @relation(fields: [applicant_id], references: [applicant_id])
+  job       Job       @relation(fields: [job_id], references: [job_id])
+
+  // Composite Constraints
+  @@unique([applicant_id, job_id])
 }
 
 enum JobStatus {
   open
   closed
+}
+
+enum ApplicationStatus {
+  submitted
+  shortlisted
+  rejected
 }

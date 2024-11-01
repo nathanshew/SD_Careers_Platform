@@ -1,5 +1,6 @@
 import express, { Request, Response} from 'express';
 import applicantRoutes from './routes/applicant';
+import applicationRoutes from './routes/application'
 import adminRoutes from './routes/admin';
 import jobRoutes from './routes/job';
 import dotenv from 'dotenv';
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/applicant', applicantRoutes);
 app.use('/admin', adminRoutes);
 app.use('/job', jobRoutes);
+app.use('/application', applicationRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript Express!');
