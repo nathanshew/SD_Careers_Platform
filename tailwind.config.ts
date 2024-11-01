@@ -11,6 +11,9 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'standard-dark-blue': '#012665',
+        'standard-orange': '#F88E38',
+        'button-orange': '#FF7300',
       },
       fontFamily: {
         header: ['var(--font-montserrat)'],
