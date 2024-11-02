@@ -40,7 +40,7 @@ export default function ApplicantDashboard() {
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <NavBar/>
       <Carousel/>
-      <div className="px-24 pb-20">
+      <div className="px-4 md:px-12 lg:px-24 pb-20">
         <PositionApplied/>
         <PositionSaved/>
       </div>
@@ -56,7 +56,7 @@ function PositionApplied() {
     <div className="font-header font-bold text-2xl lg:text-3xl mb-6">
       Positions Applied
     </div>
-    {/*FIX: Fetching from database*/}
+    {/*TODO: Fetching from database*/}
     {Object.values(inputData).map(job => {
       return (<PositionCardApplied {...job}/>)
     })}
@@ -71,7 +71,7 @@ function PositionSaved() {
     <div className="font-header font-bold text-2xl lg:text-3xl mb-6">
       Positions Saved
     </div>
-    {/*FIX: Fetching from database*/}
+    {/*TODO: Fetching from database*/}
     {Object.values(inputData).map(job => {
       return (<PositionCardSaved {...job}/>)
     })}
@@ -81,27 +81,30 @@ function PositionSaved() {
 
 // Card components (require a lot of refactoring)
 function PositionCardApplied(JobData: JobDataType) {
-    const [isShowMore, setIsShowMore] = useState(false)
+    const [isShowMore, setIsShowMore] = useState(false);
+    const ApplicationStatus = "Completed ✅"
     return (
-    <div className="shadow-xl flex flex-cols p-4 place-content-between mb-8 bg-blue-200 font-body">
+    <div className="shadow-xl flex flex-cols p-4 place-content-between mb-8 bg-blue-100 hover:bg-blue-200 font-body">
         <div className="w-full">
           <div className="text-left font-bold text-xl font-header">
             {JobData.title}
           </div>
           <div>{JobData.department} - {JobData.semester}</div>
-          {isShowMore && <div className="text-gray-600 pr-16">{JobData.description}</div>}
+          {isShowMore && <div className="text-gray-600 text-sm md:text-base lg:pr-16">
+            {JobData.description}
+          </div>}
         </div>
         <div className="min-w-36 w-fit h-auto flex flex-col text-right  place-content-between">
-          <div className="text-blue-800">[Application Status]</div>
-            <div className="align-bottom ">
+          <div className="font-bold">{ApplicationStatus}</div>
+            <div className="align-bottom text-sm">
               {/* Conditional Rendering */}
               {isShowMore === false ? (
                   <button onClick={() => setIsShowMore(true)}>
-                    View more details 
+                    View more details  ▼
                   </button>
               ) : (
                   <button onClick={() => setIsShowMore(false)}>
-                    Collapse 
+                    Collapse   ▲
                   </button>
               )}
             </div>
@@ -114,7 +117,7 @@ function PositionCardApplied(JobData: JobDataType) {
 function PositionCardSaved(JobData: JobDataType) {
     
     return (
-    <div className="shadow-xl grid grid-cols-2 p-4 h-full place-content-between mb-8 bg-blue-200 ">
+    <div className="shadow-xl grid grid-cols-2 p-4 h-full place-content-between mb-8 bg-blue-100 hover:bg-blue-200">
         <div className="">
           <div className="text-left font-bold text-xl font-header">
             {JobData.title}
@@ -122,7 +125,7 @@ function PositionCardSaved(JobData: JobDataType) {
           <div>{JobData.department} - {JobData.semester}</div>
         </div>
         <div className="text-right  content-center">
-          <Link href = {`/positions`}> {/*FIX must redirect to /positions/route */}
+          <Link href = {`/positions`}> {/*TODO must redirect to /positions/route */}
           <button className="bg-white px-3 py-2 rounded-md">
             Apply Now
           </button>
