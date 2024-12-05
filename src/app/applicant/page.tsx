@@ -3,7 +3,7 @@
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import Carousel from "@/components/Carousel";
-import { JobData, JobDataType } from "@/lib/positions/job-data";
+import { JobDataType } from "@/lib/positions/job-data";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -57,8 +57,8 @@ function PositionApplied() {
       Positions Applied
     </div>
     {/*TODO: Fetching from database*/}
-    {Object.values(inputData).map(job => {
-      return (<PositionCardApplied {...job}/>)
+    {Object.values(inputData).map((job, index) => {
+        return (<PositionCardApplied key={index} {...job}/>)
     })}
     </div>
   )
@@ -72,8 +72,8 @@ function PositionSaved() {
       Positions Saved
     </div>
     {/*TODO: Fetching from database*/}
-    {Object.values(inputData).map(job => {
-      return (<PositionCardSaved {...job}/>)
+    {Object.values(inputData).map((job, index) => {
+        return (<PositionCardSaved key={index} {...job}/>)
     })}
     </div>
   )  

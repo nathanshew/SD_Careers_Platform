@@ -2,11 +2,9 @@
 
 import checkmark from "@/app/components/confirmation/checkmark.png";
 
-import { useState } from "react";
 import Image from "next/image";
 
 export default function ConfirmationPage() {
-  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
