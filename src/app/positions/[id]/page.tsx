@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import Image from "next/image";
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import PositionNotFound from "../not-found";
