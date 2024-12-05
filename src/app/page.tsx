@@ -87,7 +87,7 @@ export default function JobApplication() {
   );
 }
 
-function JobCard(props: any) {
+function JobCard(props: JobCardProps) {
   const route = props.route;
   const jobData: JobDataType = JobData[route];
   const position = 0; // FIX:  replace this value
@@ -112,4 +112,8 @@ function JobCard(props: any) {
       </Link>
     </div>
   )
+}
+
+interface JobCardProps {
+  route: string;
 }
