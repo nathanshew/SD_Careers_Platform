@@ -4,7 +4,7 @@ import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import Link from "next/link";
 import { JobData, JobDataType } from "@/lib/positions/job-data";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import excoPic from "@/app/components/landing_page/Fintech_Exco.png";
 
@@ -17,9 +17,9 @@ export default function JobApplication() {
   const [selectedDepartment, setSelectedDepartment] = useState("All");
 
   // Handling sign in popup
-  const [isSignIn, setIsSignIn] = useState(false); // TODO
+  const isSignIn = false; // TODO
   const [isPopup, setIsPopup] = useState(false);
-  const handleDepartmentChange = (event: any) => {
+  const handleDepartmentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDepartment(event.target.value);
   };
 
@@ -91,10 +91,6 @@ export default function JobApplication() {
   );
 }
 
-interface SignInModalProps {
-  isPopup: boolean;
-  popupHandler: any;
-}
 
 function SignInModal(props: SignInModalProps) {
   const setIsPopup = props.popupHandler;
@@ -126,7 +122,7 @@ function JobCard(props: JobCardProps) {
   return (
     <div key={route} className="bg-[#012665] text-white rounded-md px-3 py-3 my-2">
       {/*Handling click*/}
-      <Link onClick={() => {!isSignIn && setIsPopup(true)}}
+      <Link onClick={() => {return !isSignIn && setIsPopup(true);}}
         href = {isSignIn ? `/positions/${route}` : "#"} // redirect to signin page
         scroll={isSignIn} // Prevent scrolling when popup shows up
       >
@@ -151,10 +147,16 @@ function JobCard(props: JobCardProps) {
   )
 }
 
+
+interface SignInModalProps {
+  isPopup: boolean;
+  popupHandler: Dispatch<SetStateAction<boolean>>;
+}
+
 interface JobCardProps {
   route: string;
   isSignIn: boolean;
-  popupHandler: any;
+  popupHandler: Dispatch<SetStateAction<boolean>>;
 }
 
 
