@@ -26,6 +26,19 @@
     }
 }
 
+
+@layer base {
+  h1 {
+    @apply text-[48px] font-bold 
+  }
+  h2 {
+    @apply text-[32px] font-bold 
+  }
+  h3 {
+    @apply text-[25px] font-semibold
+  }
+}
+
 body {
     color: var(--foreground);
     background: var(--background);

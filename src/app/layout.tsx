@@ -18,6 +18,21 @@ const roboto = Roboto({
   variable: "--font-roboto",
 });
 
+import {Montserrat, Roboto} from 'next/font/google';
+
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  weight:["700", "600", "400", "300"],
+  variable: '--font-montserrat',
+});
+
+const roboto = Roboto({ 
+  subsets: ['latin'],
+  weight:["400","500","700"],
+  variable: '--font-roboto',
+});
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -43,11 +58,11 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`
-                  ${montserrat.variable}
-                  ${roboto.variable}
-                  ${geistSans.variable}
-                  ${geistMono.variable}
-                antialiased`}
+          ${montserrat.variable}
+          ${roboto.variable}
+          ${geistSans.variable}
+          ${geistMono.variable}
+        antialiased`}
       >
         <Navbar />
         {children}
