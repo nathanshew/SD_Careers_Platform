@@ -19,10 +19,10 @@ export function decrypt_jwt(token: string) {
 
 // Function to verify and decode Google ID Token
 export async function decodeGoogleIdToken(idToken: string, clientId: string) {
-  // Step 1: Fetch Google's public keys
+  // Fetch Google's public keys
   const keys = await getGooglePublicKeys();
 
-  // Step 2: Decode the token header to get 'kid'
+  // Decode the token header to get 'kid'
   const decodedHeader = jwt.decode(idToken, { complete: true });
   if (
     !decodedHeader ||
@@ -33,13 +33,13 @@ export async function decodeGoogleIdToken(idToken: string, clientId: string) {
   }
   const kid = decodedHeader.header.kid;
 
-  // Step 3: Find the corresponding public key
+  // Find the corresponding public key
   const publicKey = getKeyFromJWKS(keys, kid);
   if (!publicKey) {
     throw new Error("Unable to find matching public key");
   }
 
-  // Step 4: Verify the token
+  // Verify the token
   const payload = jwt.verify(idToken, publicKey, {
     algorithms: ["RS256"],
     audience: clientId,
