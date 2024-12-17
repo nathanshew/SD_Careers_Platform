@@ -11,7 +11,6 @@ model Applicant {
   applicant_id Int    @id @default(autoincrement())
   username     String
   email        String @unique
-  password     String
 
   // Relation to Application
   applications Application[]
@@ -21,7 +20,6 @@ model Admin {
   admin_id Int    @id @default(autoincrement())
   username String
   email    String @unique
-  password String
 
   // Relation to Job
   jobs      Job[]
@@ -83,4 +81,11 @@ enum ApplicationStatus {
   submitted
   shortlisted
   rejected
+}
+
+model PKCESession {
+  id            Int   @id @default(autoincrement())
+  state         String   @unique
+  code_verifier  String
+  created_at     DateTime @default(now())
 }
