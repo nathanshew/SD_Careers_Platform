@@ -82,10 +82,3 @@ enum ApplicationStatus {
   shortlisted
   rejected
 }
-
-model PKCESession {
-  id            Int   @id @default(autoincrement())
-  state         String   @unique
-  code_verifier  String
-  created_at     DateTime @default(now())
-}
