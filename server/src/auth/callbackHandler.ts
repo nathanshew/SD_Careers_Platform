@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as client from "openid-client";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import assert from "assert";
 import { PrismaClient } from "@prisma/client";
 
@@ -12,39 +12,44 @@ assert(
 const prisma = new PrismaClient();
 const jwt_secret: string = process.env.JWT_SECRET; // JWT Secret
 
-export async function callbackHandler(
+export default async function callbackHandler(
   req: Request,
   res: Response,
-  config: client.Configuration,
-  decodeFunction: (id_token: string) => Promise<JwtPayload>
+  config: client.Configuration
 ) {
   const currentUrl = new URL(
     `${req.protocol}://${req.get("host")}${req.originalUrl}`
   );
 
-  // Exchange the authorization code for tokens
+  //   Exchange the authorization code for tokens
   if (!req.session.code_verifier || !req.session.state) {
     res
       .status(400)
       .json({ error: "Session is invalid or missing required attributes" });
     return;
   }
+
+  const checks: Record<string, string> = {
+    expectedState: req.session.state,
+  };
+
+  if (config.serverMetadata().supportsPKCE()) {
+    checks.pkceCodeVerifier = req.session.code_verifier; // Retrieve from session
+  }
+
   const tokenResponse = await client.authorizationCodeGrant(
     config,
     currentUrl,
-    {
-      pkceCodeVerifier: req.session.code_verifier, // Retrieve from session
-      expectedState: req.session.state,
-    }
+    checks
   );
-  console.log("Token Received");
 
   // Decode the ID token to get the user email and name
   const id_token = tokenResponse.id_token;
   if (!id_token) {
     throw new Error("OAuth 2.0/OIDC token response does not contain id token");
   }
-  const decoded_id_token = (await decodeFunction(id_token)) as {
+
+  const decoded_id_token = jwt.decode(id_token) as {
     email?: string;
     name?: string;
   };

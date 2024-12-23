@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as client from "openid-client";
 
-export async function loginHandler(
+export default async function loginHandler(
   req: Request,
   res: Response,
   redirect_uri: string,
@@ -18,7 +18,7 @@ export async function loginHandler(
   const code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
   const parameters: Record<string, string> = {
     redirect_uri: redirect_uri,
-    scope: "email profile",
+    scope: "openid email profile",
     code_challenge: code_challenge,
     code_challenge_method: "S256",
     state: state,
