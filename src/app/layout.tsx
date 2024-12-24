@@ -1,6 +1,23 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import React from "react";
+
+import {Montserrat, Roboto} from 'next/font/google';
+import ReactQueryClientProvider from "@/components/ReactQueryClientProvider";
+
+const montserrat = Montserrat({ 
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  weight:["700", "600", "400", "300"],
+  variable: '--font-montserrat',
+});
+
+const roboto = Roboto({ 
+  subsets: ['latin'],
+  weight:["400","500","700"],
+  variable: '--font-roboto',
+});
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,9 +43,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`
+          ${montserrat.variable}
+          ${roboto.variable}
+          ${geistSans.variable}
+          ${geistMono.variable}
+        antialiased`}
       >
-        {children}
+        <ReactQueryClientProvider>
+          {children}
+        </ReactQueryClientProvider>
       </body>
     </html>
   );

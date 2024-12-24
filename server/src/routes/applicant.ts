@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { createApplicantSchema, editApplicantSchema } from "../validators/applicant";
 import { logRequest } from "../utils/logUtil";
 import * as yup from 'yup';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -17,9 +18,14 @@ router.post("/", async (req: Request, res: Response) => {
       stripUnknown: true, // Required to prevent mass assignment vulnerabilities
     });
 
+    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+
     console.log(`Creating applicant with email: ${validatedData.email}`);
     const applicant = await prisma.applicant.create({
-      data: validatedData,
+      data: {
+        ...validatedData,
+        password: hashedPassword,
+      }
     });
 
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
