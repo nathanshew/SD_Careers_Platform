@@ -3,10 +3,12 @@
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import Link from "next/link";
-import { JobData, JobDataType } from "@/lib/positions/job-data";
-import { useState } from "react";
+import { JobData } from "@/lib/positions/job-data";
+import React, { useState } from "react";
 import Image from "next/image";
 import excoPic from "@/app/components/landing_page/Fintech_Exco.png";
+import { useQuery } from "react-query";
+import { Job } from "@/lib/types";
 
 // Landing page
 export default function JobApplication() {
@@ -16,14 +18,30 @@ export default function JobApplication() {
   const [rolePerPage, setRolePerPage] = useState(MIN_ROLE_PER_PAGE);
   const [selectedDepartment, setSelectedDepartment] = useState("All");
 
-  const handleDepartmentChange = (event) => {
+  const { data: availableJobs, isLoading, isError } = useQuery(
+    ["jobs"],
+    async () => {
+      console.log(`fetching from: ${process.env.NEXT_PUBLIC_API_URL}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data</div>;
+
+  const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDepartment(event.target.value);
   };
 
-  const filteredRoutes = availableRoutes.filter((jobPosition) => {
+  const filteredJobs = availableJobs.filter((jobPosition: Job) => {
     if (selectedDepartment === "All") return true;
-    return JobData[jobPosition].department === selectedDepartment;
+    return jobPosition.department.department_name === selectedDepartment;
   });
+
+  
 
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -49,62 +67,69 @@ export default function JobApplication() {
         <div>
         <select id="department-filter" value={selectedDepartment} onChange={handleDepartmentChange} className="px-2 py-1 border rounded bg-gray-200 text-s">
             <option value="All">Filter by Department</option>
-            <option value="Software Development">Software Development</option>
-            <option value="Data Science">Data Science</option>
+            <option value="SD">Software Development</option>
+            <option value="ML">Machine Learning</option>
+            <option value="Quant">Quant</option>
           </select>
         </div>
       </div>
-      {/*This is not the actual implementation. It's just some random placeholder*/}
-      <div>
-        {
-          filteredRoutes.slice(0, rolePerPage).map((jobPosition) => (
-            <JobCard key={jobPosition} route={jobPosition} />
-          ))
-        }
-      </div>
 
-      {/*see more button*/}
-      {(rolePerPage < maxRole) && <div className="text-left text-white mt-8">
-        <button 
-          className="px-4 py-2 bg-button-orange rounded" 
-          onClick={() => rolePerPage < maxRole && setRolePerPage(rolePerPage + MIN_ROLE_PER_PAGE)}
-        >
-          See more
-        </button>
-      </div>}
+      {!isLoading && !isError && (
+        <>
+          {/*This is not the actual implementation. It's just some random placeholder*/}
+          <div>
+            {filteredJobs.slice(0, rolePerPage).map((jobPosition: Job) => (
+              <JobCard key={jobPosition.job_id} job={jobPosition} />
+            ))}
+          </div>
 
-      {/*see less button*/}
-      {(rolePerPage >= maxRole) && <div className="text-left text-white mt-8">
-        <button 
-          className="px-4 py-2 bg-button-orange rounded" 
-          onClick={() => setRolePerPage(MIN_ROLE_PER_PAGE)}
-        >
-          Show less
-        </button>
-      </div>}
+          {/*see more button*/}
+          {rolePerPage < maxRole && (
+            <div className="text-left text-white mt-8">
+              <button
+                className="px-4 py-2 bg-button-orange rounded"
+                onClick={() => rolePerPage < maxRole && setRolePerPage(rolePerPage + MIN_ROLE_PER_PAGE)}
+              >
+                See more
+              </button>
+            </div>
+          )}
+
+          {/*see less button*/}
+          {rolePerPage >= maxRole && (
+            <div className="text-left text-white mt-8">
+              <button
+                className="px-4 py-2 bg-button-orange rounded"
+                onClick={() => setRolePerPage(MIN_ROLE_PER_PAGE)}
+              >
+                Show less
+              </button>
+            </div>
+          )}
+        </>
+      )}
       <Footer/>
     </div>
   );
 }
 
-function JobCard(props: JobCardProps) {
-  const route = props.route;
-  const jobData: JobDataType = JobData[route];
-  const position = 0; // FIX:  replace this value
+function JobCard({ job }: { job: Job }) {
   return (
-    <div key={route} className="bg-[#012665] text-white rounded-md px-3 py-3 my-2">
-      <Link href = {`/positions/${route}`}>
+    <div key={job.job_id} className="bg-[#012665] text-white rounded-md px-3 py-3 my-2">
+      <Link href = {`/positions/${job.job_id}`}>
       <div className="flex justify-between">
         <div className="flex flex-col justify-center ml-[5%]">
-          <div className="text-2xl font-bold mb-1">{jobData.title}</div>
+          <div className="text-2xl font-bold mb-1">{job.title}</div>
           <div className="text-s">
-            {jobData.department} <span className="mx-2">•</span> {jobData.semester}
+            {job.department.department_name} <span className="mx-2">•</span> {job.semester}
           </div>
         </div>
         <div className="flex items-center">
-          <div className="text-4xl font-bold mb-1 mr-2 pr-4">{position}</div>
+          <div className="text-4xl font-bold mb-1 mr-2 pr-4">{job.positionsAvailable}</div>
           <div className="text-base">
-            <span className="text-xs block">Position</span>
+            <span className="text-xs block">
+              {job.positionsAvailable === 1 ? "Position" : "Positions"}
+            </span>
             <span className="text-xs block">Available</span>
           </div>
         </div>
@@ -114,6 +139,3 @@ function JobCard(props: JobCardProps) {
   )
 }
 
-interface JobCardProps {
-  route: string;
-}

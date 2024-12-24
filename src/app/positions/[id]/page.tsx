@@ -1,19 +1,34 @@
 "use client"
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
 import PositionNotFound from "../not-found";
-import { JobDataType, JobData } from "@/lib/positions/job-data";
 import Link from "next/link";
-
+import { useQuery } from "react-query";
+import { Job } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import { frontEndApplicationSchema } from "@/lib/validation/applicationSchema";
+import { ValidationError } from "yup";
 
 export default function JobApplication() {
     const params = useParams();
-    const jobData: JobDataType = JobData[params.id];
+    const { data: jobData, isLoading, isError } = useQuery(
+        ["jobs", params.id],
+        async () => {
+            console.log(`fetching from: ${process.env.NEXT_PUBLIC_API_URL}`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/${params.id}`);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+    });
     
     const [activeTab, setActiveTab] = useState("overview");
+
+    if (isLoading) return <div>Loading...</div>;
+    if (isError) return <div>Error...</div>;
 
     if (jobData !== undefined) {
         return (
@@ -26,7 +41,7 @@ export default function JobApplication() {
         <section className="text-center mb-8 flex flex-col items-center justify-center">
             <div className="font-header md:text-[48px] text-[32px] font-bold">{jobData.title}</div>
             <div className="text-sm sm:text-base lg:text-xl bg-gray-200 text-gray-600 rounded-full mt-4 px-16 py-2 w-fit shadow-lg">
-              {jobData.department}  |  {jobData.semester}  |  {jobData.positionsAvailable}
+              {jobData.department.department_name}  |  {jobData.semester}  |  {jobData.positionsAvailable}
             </div>
         </section>
 
@@ -61,7 +76,7 @@ export default function JobApplication() {
     
 }
 
-function Overview(jobData: JobDataType) {
+function Overview(jobData: Job) {
   return (
   <div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
@@ -76,38 +91,204 @@ function Overview(jobData: JobDataType) {
   )
 }
 
-function Application(jobData: JobDataType) {
+function Application(jobData: Job) {
+  const [fullName, setFullName] = useState("");
+  const [faculty, setFaculty] = useState("");
+  const [major, setMajor] = useState("");
+  const [yearOfStudy, setYearOfStudy] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [resumeLink, setResumeLink] = useState("");
+  const [telegramHandle, setTelegramHandle] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [reason, setReason] = useState("");
+  const router = useRouter();
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const newApplication = {
+      applicant_id: 1, // Hardcoded for now, replace with actual user ID
+      job_id: jobData.job_id,
+      status: "submitted", // Default status for new applications, change if needed
+      name: fullName,
+      telegram: telegramHandle,
+      phone: phoneNumber,
+      year: yearOfStudy ? Number(yearOfStudy) : 0,
+      major: major,
+      faculty: faculty,
+      linkedin_url: linkedinUrl,
+      resume_url: resumeLink,
+      applicant_desc: reason,
+    };
+
+    try {
+      // Validate input first
+      await frontEndApplicationSchema.validate(newApplication, { abortEarly: false });
+
+      // Send application to backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/application`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newApplication),
+      });
+
+      // Some error occured during the request
+      if (!response.ok) {
+        console.log(response);
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log("Application created:", data);
+      // Handle successful application creation (navigate to confirmation page)
+      router.push(`/confirmation?jobTitle=${jobData.title}&department=${jobData.department.department_name}&semester=${jobData.semester}`);
+    } catch (error) {
+      // Handle validation error
+      if (error instanceof ValidationError) {
+        const validationErrors: Record<string, string> = {};
+        error.inner.forEach((e) => {
+          if (e.path) {
+            validationErrors[e.path] = e.message;
+          }
+        });
+        setErrors(validationErrors);
+      }
+    console.error("Error creating application:", error);
+  }
+};
+
   return (
-     <form className="max-w-lg mx-auto font-body md:text-xl text-base">
-          <div className="mb-4">
-            <label className="font-header block mb-2">Full Name</label>
-            <input type="text" placeholder="e.g. Shawn Tan" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label className="font-header block mb-2">Faculty / Major</label>
-            <input type="text" placeholder="e.g. SoC / CS" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label className="font-header block mb-2">Year of Study</label>
-            <input type="text" placeholder="e.g. Year 1" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label className="font-header block mb-2">Linkedin URL</label>
-            <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label className="font-header block mb-2">Resume link</label>
-            <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="mb-4">
-            <label className="font-header block mb-2">Why do you want to join NFS as {jobData.title}?</label>
-            <input type="text" placeholder="Type here" className="w-full p-2 border border-gray-300 rounded" />
-          </div>
-          <div className="w-full font-header flex items-center justify-center">
-            <button className="bg-button-orange text-white rounded-full px-10 py-2">Submit</button>
-          </div>
-          
-        </form>
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto font-body md:text-xl text-base">
+      <div className="mb-4">
+        <label className="font-header block mb-2">Full Name</label>
+        <input
+          type="text"
+          placeholder="e.g. Shawn Tan"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Faculty</label>
+        <input
+          type="text"
+          placeholder="e.g. SoC"
+          value={faculty}
+          onChange={(e) => setFaculty(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.faculty && <p className="text-red-600 text-sm">{errors.faculty}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Major</label>
+        <input
+          type="text"
+          placeholder="e.g. CS"
+          value={major}
+          onChange={(e) => setMajor(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.major && <p className="text-red-600 text-sm">{errors.major}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Year of Study</label>
+        <select
+          value={yearOfStudy}
+          onChange={(e) => setYearOfStudy(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        >
+          <option selected value="1">Year 1</option>
+          <option value="2">Year 2</option>
+          <option value="3">Year 3</option>
+          <option value="4">Year 4</option>
+        </select>
+        {errors.year && <p className="text-red-600 text-sm">{errors.year}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Telegram Handle</label>
+        <input
+          type="text"
+          placeholder="e.g. @shawn_tan"
+          value={telegramHandle}
+          onChange={(e) => setTelegramHandle(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.telegram && <p className="text-red-600 text-sm">{errors.telegram}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Phone Number</label>
+        <input
+          type="text"
+          placeholder="e.g. 23703847"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.phone && <p className="text-red-600 text-sm">{errors.phone}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Linkedin URL</label>
+        <input
+          type="text"
+          placeholder="Type here"
+          value={linkedinUrl}
+          onChange={(e) => setLinkedinUrl(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.linkedin_url && <p className="text-red-600 text-sm">{errors.linkedin_url}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Resume link</label>
+        <input
+          type="text"
+          placeholder="Type here"
+          value={resumeLink}
+          onChange={(e) => setResumeLink(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.resume_url && <p className="text-red-600 text-sm">{errors.resume_url}</p>}
+      </div>
+
+      <div className="mb-4">
+        <label className="font-header block mb-2">Why do you want to join NFS as {jobData.title}?</label>
+        <input
+          type="text"
+          placeholder="Type here"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded"
+          required
+        />
+        {errors.applicant_desc && <p className="text-red-600 text-sm">{errors.applicant_desc}</p>}
+      </div>
+
+      <div className="w-full font-header flex items-center justify-center">
+        <button type="submit" className="bg-button-orange text-white rounded-full px-10 py-2">
+          Submit
+        </button>
+      </div>
+    </form>
   )
 }
 

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import React from "react";
 
 import {Montserrat, Roboto} from 'next/font/google';
+import ReactQueryClientProvider from "@/components/ReactQueryClientProvider";
 
 const montserrat = Montserrat({ 
   subsets: ['latin'],
@@ -48,7 +50,9 @@ export default function RootLayout({
           ${geistMono.variable}
         antialiased`}
       >
-        {children}
+        <ReactQueryClientProvider>
+          {children}
+        </ReactQueryClientProvider>
       </body>
     </html>
   );
