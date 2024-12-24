@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createApplicationSchema, editApplicationSchema } from "../validators/application";
-import { logRequest } from "../utils/logUtil";
+import { createApplicationSchema, editApplicationSchema } from "../validators/application.js";
+import { logRequest } from "../utils/logUtil.js";
 import * as yup from 'yup';
 
 const prisma = new PrismaClient();

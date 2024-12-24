@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createApplicantSchema, editApplicantSchema } from "../validators/applicant";
-import { logRequest } from "../utils/logUtil";
+import { createApplicantSchema, editApplicantSchema } from "../validators/applicant.js";
+import { logRequest } from "../utils/logUtil.js";
 import * as yup from 'yup';
 import bcrypt from 'bcryptjs';
 

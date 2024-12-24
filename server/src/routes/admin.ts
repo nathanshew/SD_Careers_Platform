@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { createAdminSchema, editAdminSchema } from "../validators/admin";
-import { logRequest } from "../utils/logUtil";
+import { createAdminSchema, editAdminSchema } from "../validators/admin.js";
+import { logRequest } from "../utils/logUtil.js";
 import * as yup from 'yup';
 
 const prisma = new PrismaClient();
