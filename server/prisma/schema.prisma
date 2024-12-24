@@ -40,6 +40,8 @@ model Job {
   description   String
   semester      String
   deadline      DateTime
+  positionsAvailable Int
+  requirements  String
   status        JobStatus
   created_by    Int
 

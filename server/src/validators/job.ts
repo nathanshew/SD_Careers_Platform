@@ -10,6 +10,8 @@ export const createJobSchema = yup.object().shape({
     .required('Department ID is required'),
   description: yup.string().required('Description is required'),
   semester: yup.string().required('Semester is required'),
+  positionsAvailable: yup.number().required('Positions available is required'),
+  requirements: yup.string().required('Requirements is required'),
   deadline: yup.date().required('Deadline is required'),
   status: yup
     .mixed<'open' | 'closed'>()

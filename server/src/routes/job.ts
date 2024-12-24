@@ -44,7 +44,15 @@ router.get("/", async (_req: Request, res: Response) => {
   logRequest(_req);
   try {
     console.log("Fetching all jobs");
-    const jobs = await prisma.job.findMany();
+    const jobs = await prisma.job.findMany({
+      include: {
+        department: {
+          select: {
+            department_name: true,
+          },
+        },
+      },
+    });
     res.json(jobs);
   } catch (error) {
     console.error("Error fetching jobs:", error);
@@ -60,6 +68,13 @@ router.get("/:id", async (req: Request, res: Response) => {
     console.log(`Fetching job with ID: ${id}`);
     const job = await prisma.job.findUnique({
       where: { job_id: Number(id) },
+      include: {
+        department: {
+          select: {
+            department_name: true,
+          },
+        },
+      },
     });
     if (job) {
       console.log(`Job found: ${job.title}`);
