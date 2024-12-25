@@ -1,9 +1,10 @@
-import express, { NextFunction, Request, Response} from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import applicantRoutes from './routes/applicant.js';
 import applicationRoutes from './routes/application.js'
 import adminRoutes from './routes/admin.js';
 import jobRoutes from './routes/job.js';
 import authRoutes from './routes/auth.js';
+import interviewRoutes from './routes/interview.js';
 import assert from 'assert';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -39,6 +40,7 @@ app.use('/admin', adminRoutes);
 app.use('/job', jobRoutes);
 app.use('/application', applicationRoutes);
 app.use('/auth', authRoutes);
+app.use('/interview', interviewRoutes);
 
 // Test Route
 app.get('/', (_req: Request, res: Response) => {

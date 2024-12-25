@@ -1,6 +1,8 @@
-import { PrismaClient, JobStatus } from '@prisma/client';
+import { PrismaClient, JobStatus, InterviewStatus, ApplicationStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+
 
 async function populate_department() {
   const ml = await prisma.department.upsert({
@@ -62,6 +64,7 @@ async function populate_applicant() {
   console.log({ applicant });
 }
 
+
 async function populate_jobs() {
 
   const jobs = [
@@ -70,11 +73,11 @@ async function populate_jobs() {
       department_id: 2,
       semester: "Semester 1",
       positionsAvailable: 5,
-      description: "As a UIUX designer, you will learn from and work closely with a team of designers, engineers, and design lead to create a fit-for-purpose, convenient, and engaging user interface for applications NUS Fintech Society would build.",  
+      description: "As a UIUX designer, you will learn from and work closely with a team of designers, engineers, and design lead to create a fit-for-purpose, convenient, and engaging user interface for applications NUS Fintech Society would build.",
       requirements: "You love tech and love to design!",
       deadline: new Date("2024-12-31"),
       status: JobStatus.open,
-      created_by: 1, 
+      created_by: 1,
     },
     {
       title: "Software Engineer",
@@ -176,27 +179,91 @@ async function populate_jobs() {
       created_by: 1,
     }];
 
-    let idCounter = 1;
-    jobs.map(async (job) => {
-      const jobData = await prisma.job.upsert({
-        where: { job_id: idCounter++ },
-        update: {},
-        create: {
-          title: job.title,
-          department_id: job.department_id,
-          semester: job.semester,
-          positionsAvailable: job.positionsAvailable,
-          description: job.description,
-          requirements: job.requirements,
-          deadline: job.deadline,
-          status: job.status,
-          created_by: job.created_by,
-        },
-      });
-      return jobData;
-    }); 
+  let idCounter = 1;
+  jobs.map(async (job) => {
+    const jobData = await prisma.job.upsert({
+      where: { job_id: idCounter++ },
+      update: {},
+      create: {
+        title: job.title,
+        department_id: job.department_id,
+        semester: job.semester,
+        positionsAvailable: job.positionsAvailable,
+        description: job.description,
+        requirements: job.requirements,
+        deadline: job.deadline,
+        status: job.status,
+        created_by: job.created_by,
+      },
+    });
+    return jobData;
+  });
 
   console.log({ jobs });
+}
+
+async function populate_application() {
+  const applications = [
+    {
+      applicant_id: 1,
+      job_id: 1,
+      status: ApplicationStatus.submitted,
+      name: "Joe Smith",
+      telegram: "@joesmith",
+      phone: "91234567",
+      year: 2,
+      major: "Computer Science",
+      faculty: "Computing",
+      linkedin_url: "https://linkedin.com/in/joesmith",
+      resume_url: "https://example.com/resume/joe",
+      applicant_desc: "Passionate about software development with experience in web technologies."
+    },
+    {
+      applicant_id: 1,
+      job_id: 2,
+      status: ApplicationStatus.shortlisted,
+      name: "Joe Smith",
+      telegram: "@joesmith",
+      phone: "91234567",
+      year: 2,
+      major: "Computer Science",
+      faculty: "Computing",
+      linkedin_url: "https://linkedin.com/in/joesmith",
+      resume_url: "https://example.com/resume/joe",
+      applicant_desc: "Interested in full-stack development and system design."
+    }
+  ];
+
+  for (let i = 0; i < applications.length; i++) {
+    const application = await prisma.application.upsert({
+      where: { application_id: i + 1 },
+      update: {},
+      create: applications[i]
+    });
+    console.log({ application });
+  }
+}
+
+async function populate_interview() {
+  const interviews = [
+    {
+      application_id: 1,
+      interview_dateTime: new Date("2024-04-15T10:00:00Z"),
+      interview_URL: "https://zoom.us/meeting1",
+      interview_decision: null,
+      interview_notes: null,
+      status: InterviewStatus.scheduled
+    }
+  ];
+
+  for (let i = 0; i < interviews.length; i++) {
+    const interview = await prisma.interview.upsert({
+      where: { interview_id: i + 1 },
+      update: {},
+      create: interviews[i]
+    });
+    console.log({ interview });
+  }
 }
 
 async function main() {
@@ -204,6 +271,8 @@ async function main() {
   await populate_admin();
   await populate_jobs();
   await populate_applicant();
+  await populate_application();
+  await populate_interview();
 }
 
 main()
