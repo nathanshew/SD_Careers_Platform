@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "cookie": "^1.0.2",
     "flowbite-react": "^0.10.2",
     "next": "14.2.15",
     "react": "^18",
