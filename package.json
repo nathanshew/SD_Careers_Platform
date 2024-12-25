@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie": "^1.0.2",
     "flowbite-react": "^0.10.2",
     "next": "14.2.15",
     "react": "^18",

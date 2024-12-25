@@ -18,13 +18,13 @@ router.post("/", async (req: Request, res: Response) => {
       stripUnknown: true, // Required to prevent mass assignment vulnerabilities
     });
 
-    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+    // const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
     console.log(`Creating applicant with email: ${validatedData.email}`);
     const applicant = await prisma.applicant.create({
       data: {
         ...validatedData,
-        password: hashedPassword,
+        // password: hashedPassword,
       }
     });
 

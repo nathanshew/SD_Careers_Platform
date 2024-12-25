@@ -10,6 +10,7 @@ declare module 'express-session' {
   interface SessionData {
     code_verifier?: string;
     state?: string;
+    redirect_to_frontend?: string;
   }
 }
 

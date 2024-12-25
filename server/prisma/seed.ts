@@ -45,7 +45,6 @@ async function populate_admin() {
     create: {
       username: 'admin',
       email: 'admin@example.com',
-      password: 'saltandhash',
     }
   });
   console.log({ admin });
@@ -58,7 +57,6 @@ async function populate_applicant() {
     create: {
       username: 'joe',
       email: 'joe@gmail.com',
-      password: 'saltandhashbrowns',
     }
   });
   console.log({ applicant });

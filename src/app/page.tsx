@@ -9,6 +9,7 @@ import Image from "next/image";
 import excoPic from "@/app/components/landing_page/Fintech_Exco.png";
 import { useQuery } from "react-query";
 import { Job } from "@/lib/types";
+import { handleResponse } from "@/utils/handleResponse";
 
 // Landing page
 export default function JobApplication() {
@@ -23,10 +24,7 @@ export default function JobApplication() {
     async () => {
       console.log(`fetching from: ${process.env.NEXT_PUBLIC_API_URL}`);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job`);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
+      return (await handleResponse(response));
     });
 
   if (isLoading) return <div>Loading...</div>;

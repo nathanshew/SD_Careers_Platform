@@ -11,6 +11,7 @@ import { Job } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { frontEndApplicationSchema } from "@/lib/validation/applicationSchema";
 import { ValidationError } from "yup";
+import { handleResponse } from "@/utils/handleResponse";
 
 export default function JobApplication() {
     const params = useParams();
@@ -19,10 +20,7 @@ export default function JobApplication() {
         async () => {
             console.log(`fetching from: ${process.env.NEXT_PUBLIC_API_URL}`);
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/job/${params.id}`);
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-            return response.json();
+            return (await handleResponse(response));
     });
     
     const [activeTab, setActiveTab] = useState("overview");
@@ -136,13 +134,7 @@ function Application(jobData: Job) {
         body: JSON.stringify(newApplication),
       });
 
-      // Some error occured during the request
-      if (!response.ok) {
-        console.log(response);
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
+      const data = await handleResponse(response);
       console.log("Application created:", data);
       // Handle successful application creation (navigate to confirmation page)
       router.push(`/confirmation?jobTitle=${jobData.title}&department=${jobData.department.department_name}&semester=${jobData.semester}`);
