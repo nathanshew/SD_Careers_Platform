@@ -22,11 +22,8 @@ export default async function callbackHandler(
   );
 
   //   Exchange the authorization code for tokens
-  if (!req.session.code_verifier || !req.session.state) {
-    res
-      .status(400)
-      .json({ error: "Session is invalid or missing required attributes" });
-    return;
+  if (!req.session.code_verifier || !req.session.state || !req.session.redirect_to_frontend) {
+    throw new Error("Session is invalid or missing required attributes" );
   }
 
   const checks: Record<string, string> = {
@@ -80,13 +77,9 @@ export default async function callbackHandler(
   // Generate JWT for the applicant. No Expiry on JWT
   const payload = { email: email, role: "applicant" };
   const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-  res.json({
-    token: token,
-    username: name,
-    email: email,
-  });
-  console.log(`Applicant with email: ${email} logged in`);
 
-  // Clean up the session after use
-  req.session.destroy(() => {});
+  const redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
+  res.redirect(redirect_uri);
+  console.log(`Applicant with email: ${email} logged in`);
+  req.session.destroy(() => {}); // Clean up the session after use
 }

@@ -1,17 +1,21 @@
 "use client";
 
 import checkmark from "@/app/components/confirmation/checkmark.png";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-
+import getCookie from "@/utils/getCookie";
 
 export default function ConfirmationPage() {
   const searchParams = useSearchParams();
   const jobTitle = searchParams.get("jobTitle");
   const department = searchParams.get("department");
   const semester = searchParams.get("semester");
+  const [username, setUsername] = useState<string | null>(null);
 
+  useEffect(() => {
+    setUsername(getCookie("username"));
+  }, []);
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       {/* Header Area */}
@@ -35,8 +39,15 @@ export default function ConfirmationPage() {
             </a>
             <a href="/about-us">About Us</a>
           </nav>
-        </div>
-        <div>Welcome Back Shawn!</div>
+        </div>{" "}
+        {username ? (
+           <div>
+           Welcome Back{" "}
+           <span className="text-blue-900 font-semibold">{username}</span>!
+         </div>
+        ) : (
+          <></>
+        )}
       </header>
 
       {/* Job Role Title */}
