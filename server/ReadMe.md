@@ -7,7 +7,7 @@ Ensure you are in the **server directory** before proceeding.
 
 ### Step 1: Install Dependencies
 Install all required dependencies by running the following command:
-```bash npm install`
+```bash npm install```
 
 ---
 
@@ -21,25 +21,25 @@ Note: Ensure your **local PostgreSQL database** is set up before proceeding.
 
 ### Step 3: Push Database Schema
 Push the database schema to your PostgreSQL database:
-```bash npx prisma db push`
+```bash npx prisma db push```
 
 ---
 
 ### Step 4: Migrate Database
 Apply database migrations:
-```bash npx prisma migrate dev`
+```bash npx prisma migrate dev```
 
 ---
 
 ### Step 5: Seed Database
 Seed the database with initial data:
-```bash npx prisma db seed`
+```bash npx prisma db seed```
 
 ---
 
 ### Step 6: Run Backend Server
 Start the backend server:
-```bash npm run dev`
+```bash npm run dev```
 
 ---
 
