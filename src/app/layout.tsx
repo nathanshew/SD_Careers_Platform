@@ -5,21 +5,6 @@ import { Montserrat, Roboto } from "next/font/google";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["700", "600"],
-  variable: "--font-montserrat",
-});
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto",
-});
-
-import {Montserrat, Roboto} from 'next/font/google';
-
 const montserrat = Montserrat({ 
   subsets: ['latin'],
   style: ['normal', 'italic'],
