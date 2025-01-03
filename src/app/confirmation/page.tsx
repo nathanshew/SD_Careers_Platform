@@ -8,31 +8,6 @@ export default function ConfirmationPage() {
 
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      {/* Header Area */}
-      <header className="flex justify-between items-center mb-8">
-        <div className="flex items-center">
-          <Image
-            src="/Fintech Logo.svg"
-            alt="Fintech Society Logo"
-            width={50}
-            height={50}
-          />
-          <nav className="ml-8">
-            <a href="/" className="mr-4">
-              Home
-            </a>
-            <a href="/search-roles" className="mr-4">
-              Search Roles
-            </a>
-            <a href="/apply" className="mr-4">
-              Apply
-            </a>
-            <a href="/about-us">About Us</a>
-          </nav>
-        </div>
-        <div>Welcome Back Shawn!</div>
-      </header>
-
       {/* Job Role Title */}
       <section className="text-center mb-8">
         <h1 className="text-4xl font-bold">UI/UX Designer</h1>
