@@ -1,7 +1,5 @@
 "use client";
 
-import NavBar from "@/components/Navbar";
-import Footer from "@/components/Footer"
 import Link from "next/link";
 import { JobData, JobDataType } from "@/lib/positions/job-data";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -30,8 +28,6 @@ export default function JobApplication() {
 
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <NavBar/>
-
       {/* Exco Picture and Join Us */}
       <div className="font-bold text-center">
         <div className="relative w-full h-80 overflow-hidden">
@@ -85,7 +81,7 @@ export default function JobApplication() {
           Show less
         </button>
       </div>}
-      <Footer/>
+
       {isPopup && <SignInModal isPopup={isPopup} popupHandler={setIsPopup}/>}
     </div>
   );
