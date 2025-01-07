@@ -3,7 +3,7 @@
 import Carousel from "@/components/Carousel";
 import { JobDataType } from "@/lib/positions/job-data";
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 
 const inputData = {
   "ui-ux-designer": {

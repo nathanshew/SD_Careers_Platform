@@ -41,6 +41,8 @@ export default function SignInPage() {
                         id="confirmpassword"
                         type="password"
                         required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         className="w-3/5 rounded-2xl border-gray-200 bg-gray-200  focus:ring-blue-900 focus:border-blue-900"
                     />
                 </div>
