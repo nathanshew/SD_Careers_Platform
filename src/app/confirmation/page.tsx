@@ -18,6 +18,7 @@ export default function ConfirmationPage() {
   }, []);
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+
       {/* Header Area */}
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center">
@@ -49,6 +50,7 @@ export default function ConfirmationPage() {
           <></>
         )}
       </header>
+
 
       {/* Job Role Title */}
       <section className="text-center mb-8">

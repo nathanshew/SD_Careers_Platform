@@ -1,7 +1,5 @@
 "use client";
 
-import NavBar from "@/components/Navbar";
-import Footer from "@/components/Footer"
 import Carousel from "@/components/Carousel";
 import { JobDataType } from "@/lib/positions/job-data";
 import Link from "next/link";
@@ -38,13 +36,11 @@ const inputData = {
 export default function ApplicantDashboard() {
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <NavBar/>
       <Carousel/>
       <div className="px-4 md:px-12 lg:px-24 pb-20">
         <PositionApplied/>
         <PositionSaved/>
       </div>
-      <Footer/>
     </div>
   );
 }

@@ -1,9 +1,11 @@
 "use client"
 
 import { useParams } from "next/navigation";
+
 import React, { useState } from "react";
 import NavBar from "@/components/Navbar";
 import Footer from "@/components/Footer"
+
 import PositionNotFound from "../not-found";
 import Link from "next/link";
 import { useQuery } from "react-query";
@@ -32,7 +34,6 @@ export default function JobApplication() {
         return (
         
         <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-body">
-        <NavBar/>
         {/* Back to All Roles Button */}
         <GoBack/>
         {/* Job Role Title */}
@@ -65,7 +66,6 @@ export default function JobApplication() {
         ) : (
             <Application {...jobData}/>
         )}
-        <Footer/>
         </div>
     );
     } else {

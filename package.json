@@ -9,7 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+
     "bcryptjs": "^2.4.3",
+
+    "@headlessui/react": "^2.1.10",
+    "@heroicons/react": "^2.1.5",
+
     "flowbite-react": "^0.10.2",
     "next": "14.2.15",
     "react": "^18",
