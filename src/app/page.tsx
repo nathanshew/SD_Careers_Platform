@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { JobData, JobDataType } from "@/lib/positions/job-data";
+import { JobData } from "@/lib/positions/job-data";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import excoPic from "@/app/components/landing_page/Fintech_Exco.png";
