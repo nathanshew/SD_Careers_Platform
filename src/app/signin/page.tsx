@@ -18,7 +18,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     setRedirectToFrontend(`${window.location.origin}${pathname}/success`);
-  });
+  }, [pathname]);
 
   return (
     <>

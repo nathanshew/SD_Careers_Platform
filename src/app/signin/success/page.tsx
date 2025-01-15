@@ -31,7 +31,7 @@ export default function SignInSuccessPage() {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [router, searchParams]);
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-50 font-[family-name:var(--font-geist-sans)]">
