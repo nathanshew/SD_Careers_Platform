@@ -8,9 +8,20 @@ const session_secret: string = process.env.SESSION_SECRET; // SESSION Secret
 // Extend SessionData inline
 declare module 'express-session' {
   interface SessionData {
+    // OAuth login verification
     code_verifier?: string;
     state?: string;
     redirect_to_frontend?: string;
+    redirect_to_frontend_set_password?: string;
+
+    // Sign up verification
+    verificationData?: {
+      code: string;
+      username: string;
+      email: string;
+      hashed_password: string;
+    };
+    
   }
 }
 
@@ -19,7 +30,10 @@ const sessionMiddleware = session({
   secret: session_secret,
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }, // Set to true in production
+  cookie: { 
+    secure: false, // Set to true in production
+    maxAge: 5 * 60 * 1000 // 5 minutes (in milliseconds)
+  }, 
 });
 
 export { sessionMiddleware };

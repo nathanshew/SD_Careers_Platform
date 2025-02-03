@@ -59,27 +59,19 @@ export default async function callbackHandler(
     throw new Error("Failed to extract name from ID token");
   }
 
-  // Add applicant to database if needed
-  const existingApplicant = await prisma.applicant.findUnique({
-    where: { email: email }, // Query based on email
-  });
-  if (!existingApplicant) {
-    console.log(`Creating applicant with email: ${email}`);
-    await prisma.applicant.create({
-      data: {
-        username: name,
-        email: email,
-      },
-    });
-    res.status(201);
-  }
-
   // Generate JWT for the applicant. No Expiry on JWT
   const payload = { email: email, role: "applicant" };
   const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
 
-  const redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
+  let redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
+  const existingApplicant = await prisma.applicant.findUnique({
+    where: { email: email }, // Query based on email
+  });
+  if (!existingApplicant) {
+    // Redirect applicant to set password
+    redirect_uri = `${req.session.redirect_to_frontend_set_password}?token=${token}&username=${name}&email=${email}`;
+  }
   res.redirect(redirect_uri);
-  console.log(`Applicant with email: ${email} logged in`);
+  console.log(`Generated jwt for email: ${email}`);
   req.session.destroy(() => {}); // Clean up the session after use
 }
