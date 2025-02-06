@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { handleResponse } from "@/utils/handleResponse";
 
-export default function SignUpPage() {
+export default function VerifiedPage() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -23,7 +25,7 @@ export default function SignUpPage() {
         
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verifiedSignup`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -37,8 +39,18 @@ export default function SignUpPage() {
             });
             
             const data = await handleResponse(response)
+            if (!data.token || !data.username || !data.email) {
+                throw new Error("Invalid response from server");
+              }
             
-            // TODO: Redirect to verification code page
+            // Store in cookies
+            {/*Note: Browser cookies currently set to have no expiry date */}
+            document.cookie = `token=${encodeURIComponent(data.token)}; path=/;`;
+            document.cookie = `username=${encodeURIComponent(data.username)}; path=/;`;
+            document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
+
+            console.log(`${username} signed-up successfully`);
+            router.push("/");
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message);
@@ -50,10 +62,22 @@ export default function SignUpPage() {
         }
     };
 
+    useEffect(() => {
+        const username = searchParams.get("username");
+        const email = searchParams.get("email");
+    
+        if (!username || !email) {
+          throw new Error("Missing query fields");
+        }
+        setUsername(username)
+        setEmail(email);
+        console.log(`${username} verified, prompting user to set password`);
+      }, [searchParams]);
+
     return (
         <div className="min-h-screen flex justify-center items-center font-[family-name:var(--font-geist-sans)]">
             <form className="flex flex-col items-center gap-4 p-6 w-3/4 md:w-1/2 lg:w-1/3" onSubmit={handleSubmit}>
-                <h2 className="text-3xl font-bold text-blue-900 w-full text-left">Create Account</h2>
+                <h2 className="text-3xl font-bold text-blue-900 w-full text-left">Please Set Password for Account</h2>
                 <hr className="border-blue-900 w-full mb-4" />
                 <div className="flex w-full items-center gap-4 pb-3">
                     <label htmlFor="email" className="w-1/4 text-left">Email</label>
@@ -61,8 +85,7 @@ export default function SignUpPage() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
+                        disabled
                         className="w-3/5 rounded-2xl border-gray-200 bg-gray-200 focus:ring-blue-900 focus:border-blue-900"
                     />
                 </div>
@@ -72,8 +95,7 @@ export default function SignUpPage() {
                         id="username"
                         type="text"
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
+                        disabled
                         className="w-3/5 rounded-2xl border-gray-200 bg-gray-200 focus:ring-blue-900 focus:border-blue-900"
                     />
                 </div>
@@ -106,17 +128,8 @@ export default function SignUpPage() {
                         disabled={loading}
                         className="w-40 font-bold bg-gradient-to-r from-blue-900 to-yellow-500 text-white rounded-full py-2 hover:opacity-90"
                     >
-                        {loading ? "Signing Up..." : "Sign Up"}
+                        {loading ? "Setting Password..." : "Set Password"}
                     </button>
-                </div>
-                <hr className="border-blue-900 w-full mt-4" />
-                <div className="text-sm mt-4 text-gray-600">
-                    Already have an account?{' '}
-                    <Link
-                        href="/signin"
-                        className="text-transparent bg-clip-text bg-gradient-to-r from-blue-900 to-yellow-500 hover:underline">
-                        Sign In
-                    </Link>
                 </div>
             </form>
         </div>

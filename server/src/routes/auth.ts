@@ -51,7 +51,7 @@ router.get(
     try {
       const config = await getGoogleConfig()
       const redirect_uri = `${req.protocol}://${req.get("host")}/auth/google/callback`;
-      loginHandler(req, res, redirect_uri, config);
+      await loginHandler(req, res, redirect_uri, config);
     } catch (error) {
       console.error("Error during Google login:", error);
       res.status(500).json({ error: "Failed to initiate login process" });
@@ -81,7 +81,7 @@ router.get(
     try {
       const config = await getLinkedInConfig()
       const redirect_uri = `${req.protocol}://${req.get("host")}/auth/linkedin/callback`;
-      loginHandler(req, res, redirect_uri, config);
+      await loginHandler(req, res, redirect_uri, config);
     } catch (error) {
       console.error("Error during LinkedIn login:", error);
       res.status(500).json({ error: "Failed to initiate login process" });
@@ -178,7 +178,8 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
     const { code: storedCode, username, email, hashed_password } = req.session.verificationData;
 
     if (validatedData.code !== storedCode) {
-        res.status(400).json({ error: "Invalid verification code" });
+      res.status(400).json({ error: "Invalid verification code" });
+      return;
     }
 
     console.log(`Creating applicant in the database`);
@@ -189,7 +190,7 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
     const payload = { email, role: "applicant" };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-    res.status(201).json({ message: "Verification successful", token });
+    res.status(201).json({ message: "Verification successful", token, username, email });
     req.session.destroy(() => {}); // Clean up the session after use
   } catch (error) {
     if (error instanceof yup.ValidationError) {
@@ -201,6 +202,51 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
     } else {
       console.error("Error verifying code:", error);
       res.status(500).json({ error: "Error verifying the code" });
+    }
+  }
+});
+
+router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Response) => {
+  logRequest(req);
+  try {
+    console.log(`Validating input data`);
+    const validatedData = await signUpSchema.validate(req.body, {
+      abortEarly: false,
+      stripUnknown: true, 
+    });
+
+    if (!req.session.verifiedData) {
+      res.status(400).json({ error: "No verified session found. Please sign up again." });
+      return;
+    }
+
+    const { username, email } = req.session.verifiedData;
+
+    if (validatedData.username !== username || validatedData.email !== email) {
+      res.status(400).json({ error: "User info does not match verified info" });
+      return;
+    }
+
+    console.log(`Creating applicant in the database`);
+    const applicant = await prisma.applicant.create({
+        data: { username, email, password: await bcrypt.hash(validatedData.password, 10) },
+    });
+
+    console.log(`Applicant created with ID: ${applicant.applicant_id}`);
+    const payload = { email, role: "applicant" };
+    const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
+    res.status(201).json({ message: "Verified sign-up successful", token, username, email });
+    req.session.destroy(() => {}); // Clean up the session after use
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      // If validation fails
+      res.status(400).json({
+        error: "Validation error",
+        details: error.errors, // Array of validation error messages
+      });
+    } else {
+      console.error("Error with verified sign-up:", error);
+      res.status(500).json({ error: "Error with verified sign-up" });
     }
   }
 });
@@ -236,7 +282,5 @@ router.post("/login", async (req: Request, res: Response) => {
       res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
 
 export default router;

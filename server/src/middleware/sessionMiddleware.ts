@@ -12,7 +12,13 @@ declare module 'express-session' {
     code_verifier?: string;
     state?: string;
     redirect_to_frontend?: string;
-    redirect_to_frontend_set_password?: string;
+    redirect_to_frontend_verified_signup?: string;
+
+    // Set password
+    verifiedData?: {
+      username: string;
+      email: string;
+    }
 
     // Sign up verification
     verificationData?: {
@@ -31,6 +37,7 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   cookie: { 
+    httpOnly: true,
     secure: false, // Set to true in production
     maxAge: 5 * 60 * 1000 // 5 minutes (in milliseconds)
   }, 

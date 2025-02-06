@@ -22,8 +22,12 @@ export default async function callbackHandler(
   );
 
   //   Exchange the authorization code for tokens
-  if (!req.session.code_verifier || !req.session.state || !req.session.redirect_to_frontend) {
-    throw new Error("Session is invalid or missing required attributes" );
+  if (
+    !req.session.code_verifier ||
+    !req.session.state ||
+    !req.session.redirect_to_frontend
+  ) {
+    throw new Error("Session is invalid or missing required attributes");
   }
 
   const checks: Record<string, string> = {
@@ -59,18 +63,28 @@ export default async function callbackHandler(
     throw new Error("Failed to extract name from ID token");
   }
 
+  const existingApplicant = await prisma.applicant.findUnique({
+    where: { email: email }, // Query based on email
+  });
+
+  if (!existingApplicant) {
+    // Save verified applicant info in session
+    req.session.verifiedData = {
+      username: name,
+      email: email
+    };
+
+    // Redirect applicant to set password
+    const redirect_uri_set_password = `${req.session.redirect_to_frontend_verified_signup}?username=${name}&email=${email}`;
+    res.redirect(redirect_uri_set_password);
+    return;
+  }
+
   // Generate JWT for the applicant. No Expiry on JWT
   const payload = { email: email, role: "applicant" };
   const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
 
-  let redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
-  const existingApplicant = await prisma.applicant.findUnique({
-    where: { email: email }, // Query based on email
-  });
-  if (!existingApplicant) {
-    // Redirect applicant to set password
-    redirect_uri = `${req.session.redirect_to_frontend_set_password}?token=${token}&username=${name}&email=${email}`;
-  }
+  const redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
   res.redirect(redirect_uri);
   console.log(`Generated jwt for email: ${email}`);
   req.session.destroy(() => {}); // Clean up the session after use

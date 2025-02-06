@@ -2,6 +2,7 @@ import * as yup from 'yup';
 
 export const loginOpenIdConnectSchema = yup.object().shape({
     redirect_to_frontend: yup.string().required('Redirect URI is required'),
+    redirect_to_frontend_verified_signup: yup.string().required('Redirect URI to verified sign-up page required')
 });
 
 export const loginSchema = yup.object().shape({

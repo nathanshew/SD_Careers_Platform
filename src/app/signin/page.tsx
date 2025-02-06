@@ -1,24 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import React, { useState, useEffect } from "react";
 
 export default function SignInPage() {
-  const pathname = usePathname();
   const [redirectToFrontend, setRedirectToFrontend] = useState<string>("");
+  const [redirectToFrontendVerifiedSignup, setRedirectToFrontendVerifiedSignup] = useState<string>("");
 
   const handleGoogleSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/login?redirect_to_frontend=${redirectToFrontend}`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/login?redirect_to_frontend=${redirectToFrontend}&redirect_to_frontend_verified_signup=${redirectToFrontendVerifiedSignup}`;
   };
 
   const handleLinkedInSignIn = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/linkedIn/login?redirect_to_frontend=${redirectToFrontend}`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/linkedIn/login?redirect_to_frontend=${redirectToFrontend}&redirect_to_frontend_verified_signup=${redirectToFrontendVerifiedSignup}`;
   };
 
   useEffect(() => {
-    setRedirectToFrontend(`${window.location.origin}${pathname}/success`);
-  }, [pathname]);
+    setRedirectToFrontend(`${window.location.origin}/signin/success`);
+    setRedirectToFrontendVerifiedSignup(`${window.location.origin}/signup/verified`);
+  }, []);
 
   return (
     <>

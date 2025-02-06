@@ -33,7 +33,10 @@ app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
 });
 
 // Routes
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3001"], // Frontend URL (HARDCODED FOR NOW)
+  credentials: true, // Allow cookies and session storage
+}));
 app.use(express.json());
 app.use('/applicant', applicantRoutes);
 app.use('/admin', adminRoutes);
