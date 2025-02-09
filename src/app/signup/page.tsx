@@ -99,7 +99,7 @@ export default function SignUpPage() {
                         className="w-3/5 rounded-2xl border-gray-200 bg-gray-200  focus:ring-blue-900 focus:border-blue-900"
                     />
                 </div>
-                {error && <p className="text-red-600">{error}</p>}
+                {error && <p className="text-red-600 text-center mt-3 font-medium">{error}</p>}
                 <div className="w-full flex justify-center mt-4">
                     <button
                         type="submit"

@@ -1,8 +1,10 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Applicant } from '@prisma/client';
 import { signUpSchema, loginSchema, verifySchema } from "../validators/auth.js";
 import { logRequest } from "../utils/logUtil.js";
 import { generateVerificationCode } from "../utils/authUtil.js";
+import { applicantSerializer } from "../serializers/applicant.js";
 import { sessionMiddleware } from "../middleware/sessionMiddleware.js";
 import  getGoogleConfig  from "../auth/clients/googleClient.js";
 import getLinkedInConfig from "../auth/clients/linkedinClient.js";
@@ -118,8 +120,9 @@ router.post(
 
         console.log(`Verifying unique applicant`);
         if (await prisma.applicant.findUnique({where: {email: validatedData.email}})) {
-          console.log("Applicant account has been created");
+          console.log("Applicant with this email already exist");
           res.status(404).json({ error: "Applicant with this email already exist" });
+          return;
         }
     
         console.log(`Saving applicant info in session`);
@@ -190,7 +193,7 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
     const payload = { email, role: "applicant" };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-    res.status(201).json({ message: "Verification successful", token, username, email });
+    res.status(201).json({ message: "Verification successful", token, ...applicantSerializer(applicant) });
     req.session.destroy(() => {}); // Clean up the session after use
   } catch (error) {
     if (error instanceof yup.ValidationError) {
@@ -235,7 +238,7 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
     const payload = { email, role: "applicant" };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-    res.status(201).json({ message: "Verified sign-up successful", token, username, email });
+    res.status(201).json({ message: "Verified sign-up successful", token, ...applicantSerializer(applicant) });
     req.session.destroy(() => {}); // Clean up the session after use
   } catch (error) {
     if (error instanceof yup.ValidationError) {
@@ -251,7 +254,7 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
   }
 });
 
-router.post("/login", async (req: Request, res: Response) => {
+router.post("/signin", async (req: Request, res: Response) => {
   logRequest(req);
   try {
     console.log(`Validating input data`);
@@ -260,14 +263,14 @@ router.post("/login", async (req: Request, res: Response) => {
       stripUnknown: true, 
     });
 
-    const existingApplicant = await prisma.applicant.findUnique({where: {email: validatedData.email}});
+    const existingApplicant: Applicant | null = await prisma.applicant.findUnique({where: {email: validatedData.email}});
 
       if (!existingApplicant) {
         res.status(404).json({ error: "Applicant not found" });
         return;
       }
 
-      const passwordMatch = bcrypt.compare(validatedData.password, existingApplicant.password);
+      const passwordMatch = await bcrypt.compare(validatedData.password, existingApplicant.password);
       if (!passwordMatch) {
           res.status(401).json({ error: "Invalid password" });
           return;
@@ -275,7 +278,8 @@ router.post("/login", async (req: Request, res: Response) => {
 
       const payload = { email: validatedData.email, role: "applicant" };
       const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-      res.status(200).json({ message: "Login successful", token });
+      console.log(`${existingApplicant.username} signin successful`);
+      res.status(200).json({ message: "Signin successful", token, ...applicantSerializer(existingApplicant) });
 
   } catch (error) {
       console.error("Error logging in:", error);

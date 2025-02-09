@@ -4,6 +4,9 @@
 PORT=3001
 HOST=localhost
 
+# Frontend Hostname
+FRONTEND_HOST="http://localhost:3001"
+
 # Server secret
 SESSION_SECRET="sessionSecrettt"
 JWT_SECRET="jwtSecrettt"

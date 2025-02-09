@@ -12,6 +12,7 @@ import cors from 'cors';
 // Assertions for type safety
 assert(process.env.PORT, "Environment variable PORT must be defined.");
 assert(process.env.HOST, "Environment variable HOST must be defined.");
+assert(process.env.FRONTEND_HOST, "Environment variable FRONTEND_HOST must be defined.");
 
 // Declarations & Configurations
 dotenv.config();
@@ -34,7 +35,7 @@ app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
 
 // Routes
 app.use(cors({
-  origin: ["http://localhost:3001"], // Frontend URL (HARDCODED FOR NOW)
+  origin: [process.env.FRONTEND_HOST],
   credentials: true, // Allow cookies and session storage
 }));
 app.use(express.json());
