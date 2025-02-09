@@ -4,6 +4,9 @@
 PORT=3001
 HOST=localhost
 
+# Frontend Hostname
+FRONTEND_HOST="http://localhost:3001"
+
 # Server secret
 SESSION_SECRET="sessionSecrettt"
 JWT_SECRET="jwtSecrettt"
@@ -19,3 +22,7 @@ GOOGLE_CLIENT_SECRET="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"
 LINKEDIN_CLIENT_ID="86ubf590mi26zb"
 LINKEDIN_CLIENT_SECRET="WPL_AP1.pLcDrMd0C8JyM71q.STlaMw=="
 
+# NodeMailer configuration
+NODEMAILER_SERVICE="gmail"
+NODEMAILER_USER="fintechsocietycareers@gmail.com"
+NODEMAILER_PASS="jcwumrzyziorybek"

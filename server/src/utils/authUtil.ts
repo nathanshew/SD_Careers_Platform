@@ -16,4 +16,9 @@ export function decrypt_jwt(token: string) {
   return decoded.email, decoded.role
 }
 
+// Function to generate a 6-digit verification code as a string.
+export function generateVerificationCode(): string {
+  return Math.floor(Math.random() * 1000000).toString();
+}
+
 

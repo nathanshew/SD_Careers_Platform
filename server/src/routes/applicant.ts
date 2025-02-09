@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { createApplicantSchema, editApplicantSchema } from "../validators/applicant.js";
 import { logRequest } from "../utils/logUtil.js";
+import { applicantSerializer } from "../serializers/applicant.js";
 import * as yup from 'yup';
 import bcrypt from 'bcryptjs';
 
@@ -15,21 +16,21 @@ router.post("/", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await createApplicantSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
-    // const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+    const hashedPassword = await bcrypt.hash(validatedData.password, 10);
 
     console.log(`Creating applicant with email: ${validatedData.email}`);
     const applicant = await prisma.applicant.create({
       data: {
         ...validatedData,
-        // password: hashedPassword,
+        password: hashedPassword,
       }
     });
 
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
-    res.status(201).json(applicant);
+    res.status(201).json(applicantSerializer(applicant));
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       // If validation fails
@@ -50,7 +51,7 @@ router.get("/", async (_req: Request, res: Response) => {
   try {
     console.log("Fetching all applicants");
     const applicants = await prisma.applicant.findMany();
-    res.json(applicants);
+    res.json(applicants.map(applicant => applicantSerializer(applicant)));
   } catch (error) {
     console.error("Error fetching applicants:", error);
     res.status(500).json({ error: "Error fetching applicants" });
@@ -68,7 +69,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     });
     if (applicant) {
       console.log(`Applicant found: ${applicant.username}`);
-      res.json(applicant);
+      res.json(applicantSerializer(applicant));
     } else {
       console.warn(`Applicant with ID ${id} not found`);
       res.status(404).json({ error: "Applicant not found" });
@@ -87,7 +88,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await editApplicantSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
     console.log(`Updating applicant with ID: ${id}`);
@@ -97,7 +98,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     });
 
     console.log(`Applicant with ID ${id} updated`);
-    res.json(updatedApplicant);
+    res.json(applicantSerializer(updatedApplicant));
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       // If validation fails
