@@ -72,7 +72,7 @@ export default function JobApplication() {
       <div>
         {
           filteredJobs.slice(0, rolePerPage).map((jobPosition: Job) => (
-            <JobCard job={jobPosition} isSignIn={isSignIn} popupHandler={setIsPopup}/>
+            <JobCard key={jobPosition.job_id} job={jobPosition} isSignIn={isSignIn} popupHandler={setIsPopup}/>
           ))
         }
       </div>
