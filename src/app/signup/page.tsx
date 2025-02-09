@@ -9,10 +9,10 @@ export default function SignUpPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState<String|null>(null);
+    const [error, setError] = useState<string|null>(null);
     const [loading, setLoading] = useState(false);
     
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         
@@ -37,6 +37,7 @@ export default function SignUpPage() {
             });
             
             const data = await handleResponse(response)
+            console.log(data)
             
             // TODO: Redirect to verification code page
         } catch (error) {
