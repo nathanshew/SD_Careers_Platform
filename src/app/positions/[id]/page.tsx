@@ -3,8 +3,6 @@
 import { useParams } from "next/navigation";
 
 import React, { useState } from "react";
-import NavBar from "@/components/Navbar";
-import Footer from "@/components/Footer"
 
 import PositionNotFound from "../not-found";
 import Link from "next/link";

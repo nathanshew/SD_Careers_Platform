@@ -14,7 +14,7 @@ router.post("/", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await createApplicationSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
     console.log(`Creating application with Job id: ${validatedData.job_id} and Application id: ${validatedData.applicant_id}`);
@@ -81,7 +81,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await editApplicationSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
     console.log(`Updating application with ID: ${id}`);

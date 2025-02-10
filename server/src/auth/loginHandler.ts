@@ -10,12 +10,17 @@ export default async function loginHandler(
   config: client.Configuration
 ) {
   logRequest(req);
-  const redirect_to_frontend = (await loginOpenIdConnectSchema.validate(req.query)).redirect_to_frontend;
+  const validatedData = await loginOpenIdConnectSchema.validate(req.query, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
   const code_verifier = client.randomPKCECodeVerifier();
   const state = client.randomState();
 
   // Store values in the session
-  req.session.redirect_to_frontend = redirect_to_frontend;
+  req.session.redirect_to_frontend = validatedData.redirect_to_frontend;
+  req.session.redirect_to_frontend_verified_signup =
+    validatedData.redirect_to_frontend_verified_signup;
   req.session.code_verifier = code_verifier;
   req.session.state = state;
 

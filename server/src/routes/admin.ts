@@ -14,7 +14,7 @@ router.post("/", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await createAdminSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
     console.log(`Creating admin with email: ${validatedData.email}`);
@@ -84,7 +84,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     console.log(`Validating input data`);
     const validatedData = await editAdminSchema.validate(req.body, {
       abortEarly: false,
-      stripUnknown: true, // Required to prevent mass assignment vulnerabilities
+      stripUnknown: true, 
     });
 
     console.log(`Updating admin with ID: ${id}`);

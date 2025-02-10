@@ -22,8 +22,12 @@ export default async function callbackHandler(
   );
 
   //   Exchange the authorization code for tokens
-  if (!req.session.code_verifier || !req.session.state || !req.session.redirect_to_frontend) {
-    throw new Error("Session is invalid or missing required attributes" );
+  if (
+    !req.session.code_verifier ||
+    !req.session.state ||
+    !req.session.redirect_to_frontend
+  ) {
+    throw new Error("Session is invalid or missing required attributes");
   }
 
   const checks: Record<string, string> = {
@@ -59,19 +63,21 @@ export default async function callbackHandler(
     throw new Error("Failed to extract name from ID token");
   }
 
-  // Add applicant to database if needed
   const existingApplicant = await prisma.applicant.findUnique({
     where: { email: email }, // Query based on email
   });
+
   if (!existingApplicant) {
-    console.log(`Creating applicant with email: ${email}`);
-    await prisma.applicant.create({
-      data: {
-        username: name,
-        email: email,
-      },
-    });
-    res.status(201);
+    // Save verified applicant info in session
+    req.session.verifiedData = {
+      username: name,
+      email: email
+    };
+
+    // Redirect applicant to set password
+    const redirect_uri_set_password = `${req.session.redirect_to_frontend_verified_signup}?username=${name}&email=${email}`;
+    res.redirect(redirect_uri_set_password);
+    return;
   }
 
   // Generate JWT for the applicant. No Expiry on JWT
@@ -80,6 +86,6 @@ export default async function callbackHandler(
 
   const redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
   res.redirect(redirect_uri);
-  console.log(`Applicant with email: ${email} logged in`);
+  console.log(`Generated jwt for email: ${email}`);
   req.session.destroy(() => {}); // Clean up the session after use
 }
