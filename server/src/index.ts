@@ -9,13 +9,13 @@ import assert from 'assert';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-dotenv.config();
 // Assertions for type safety
 assert(process.env.PORT, "Environment variable PORT must be defined.");
 assert(process.env.HOST, "Environment variable HOST must be defined.");
 assert(process.env.FRONTEND_HOST, "Environment variable FRONTEND_HOST must be defined.");
 
 // Declarations & Configurations
+dotenv.config();
 const app = express();
 const PORT = parseInt(process.env.PORT, 10);
 const HOST = process.env.HOST;
