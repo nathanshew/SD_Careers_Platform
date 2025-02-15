@@ -12,4 +12,20 @@ export type Job = {
     semester: string;
     status: string;
     title: string;
-  }
+}
+
+export interface Participant {
+    name: string;
+    status: string;
+    positionApplied: string;
+    department: string;
+    yearOfStudy: string;
+    major: string;
+    faculty: string;
+    linkedInUrl: string;
+    resumeLink: string;
+    whyNFS: string;
+    interviewDate: string;
+    interviewer: string;
+    interviewDecision: string;
+}

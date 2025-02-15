@@ -1,6 +1,8 @@
 import session from 'express-session';
 import assert from "assert";
+import dotenv from 'dotenv';
 
+dotenv.config();
 assert(process.env.SESSION_SECRET, "Environment variable SESSION_SECRET must be defined.");
 
 const session_secret: string = process.env.SESSION_SECRET; // SESSION Secret
