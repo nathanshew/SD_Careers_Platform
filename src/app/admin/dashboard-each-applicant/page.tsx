@@ -1,21 +1,7 @@
 "use client";
+import { Participant } from '@/lib/types';
 import React, { useState, useEffect } from 'react';
 
-interface Participant {
-    name: string;
-    status: string;
-    positionApplied: string;
-    department: string;
-    yearOfStudy: string;
-    major: string;
-    faculty: string;
-    linkedInUrl: string;
-    resumeLink: string;
-    whyNFS: string;
-    interviewDate: string;
-    interviewer: string;
-    interviewDecision: string;
-}
 
 const mockParticipant: Participant = {
     name: 'John Doe',
@@ -30,7 +16,7 @@ const mockParticipant: Participant = {
     whyNFS: 'Passionate about fintech and innovation',
     interviewDate: '2024-12-01',
     interviewer: 'Jane Smith',
-    interviewDecision: 'TBD',
+    interviewDecision: 'TBD'
 };
 
 // Simulate API call
@@ -42,7 +28,7 @@ const fetchParticipant = (): Promise<Participant> => {
     });
 };
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardEachApplicantPage() {
     const [participant, setParticipant] = useState<Participant | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
