@@ -3,6 +3,7 @@ import * as client from "openid-client";
 import jwt from "jsonwebtoken";
 import assert from "assert";
 import { PrismaClient } from "@prisma/client";
+import { APPLICANT_ROLE } from "../constants.js";
 
 assert(
   process.env.JWT_SECRET,
@@ -81,7 +82,7 @@ export default async function callbackHandler(
   }
 
   // Generate JWT for the applicant. No Expiry on JWT
-  const payload = { email: email, role: "applicant" };
+  const payload = { email: email, role: APPLICANT_ROLE };
   const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
 
   const redirect_uri = `${req.session.redirect_to_frontend}?token=${token}&username=${name}&email=${email}`;
