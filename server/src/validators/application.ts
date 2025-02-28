@@ -73,8 +73,12 @@ export const editApplicationSchema = yup.object().shape({
         .min(1, 'Year must be between 1 and 4')
         .max(4, 'Year must be between 1 and 4')
         .optional(),
-    major: yup.string().required('Major is required'),
-    faculty: yup.string().required('Faculty is required'),
+    major: yup
+        .string()
+        .optional(),
+    faculty: yup
+        .string()
+        .optional(),
     linkedin_url: yup
         .string()
         .url('LinkedIn URL must be a valid URL')
@@ -83,5 +87,7 @@ export const editApplicationSchema = yup.object().shape({
         .string()
         .url('Resume URL must be a valid URL')
         .optional(),
-    applicant_desc: yup.string().required('Applicant description is required'),
+    applicant_desc: yup
+        .string()
+        .optional(),
 });

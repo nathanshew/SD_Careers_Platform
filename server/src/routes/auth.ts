@@ -6,6 +6,8 @@ import { logRequest } from "../utils/logUtil.js";
 import { generateVerificationCode } from "../utils/authUtil.js";
 import { applicantSerializer } from "../serializers/applicant.js";
 import { sessionMiddleware } from "../middleware/sessionMiddleware.js";
+import { JwtPayload } from "../interface/jwtPayLoad.js";
+import { APPLICANT_ROLE } from "../constants.js";
 import  getGoogleConfig  from "../auth/clients/googleClient.js";
 import getLinkedInConfig from "../auth/clients/linkedinClient.js";
 import loginHandler from "../auth/loginHandler.js";
@@ -191,7 +193,7 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
     });
 
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
-    const payload = { email, role: "applicant" };
+    const payload: JwtPayload = { email, role: APPLICANT_ROLE };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
     res.status(201).json({ message: "Verification successful", token, ...applicantSerializer(applicant) });
     req.session.destroy(() => {}); // Clean up the session after use
@@ -236,7 +238,7 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
     });
 
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
-    const payload = { email, role: "applicant" };
+    const payload: JwtPayload = { email, role: APPLICANT_ROLE };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
     res.status(201).json({ message: "Verified sign-up successful", token, ...applicantSerializer(applicant) });
     req.session.destroy(() => {}); // Clean up the session after use
@@ -276,7 +278,7 @@ router.post("/signin", async (req: Request, res: Response) => {
           return;
       }
 
-      const payload = { email: validatedData.email, role: "applicant" };
+      const payload: JwtPayload = { email: validatedData.email, role: APPLICANT_ROLE };
       const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
       console.log(`${existingApplicant.username} signin successful`);
       res.status(200).json({ message: "Signin successful", token, ...applicantSerializer(existingApplicant) });

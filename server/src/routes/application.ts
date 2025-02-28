@@ -2,7 +2,9 @@ import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { createApplicationSchema, editApplicationSchema } from "../validators/application.js";
 import { logRequest } from "../utils/logUtil.js";
+import jwtMiddleware from "../middleware/jwtMiddleware.js";
 import * as yup from 'yup';
+import { APPLICANT_ROLE } from "../constants.js";
 
 const prisma = new PrismaClient();
 const router = Router();
@@ -74,7 +76,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update an application by ID
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", jwtMiddleware, async (req: Request, res: Response) => {
   logRequest(req);
   const { id } = req.params;
   try {
@@ -83,6 +85,22 @@ router.put("/:id", async (req: Request, res: Response) => {
       abortEarly: false,
       stripUnknown: true, 
     });
+
+    console.log(`Validating application id`);
+    const application = await prisma.application.findUnique({
+      where: { application_id: Number(id) },
+    });
+
+    if (!application) {
+      res.status(404).json({ error: "Application id not found" });
+      return;
+    }
+
+    console.log(`Validating sender id`);
+    if (res.locals.role != APPLICANT_ROLE || res.locals.sender_id != application.applicant_id) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     console.log(`Updating application with ID: ${id}`);
     const updatedApplicant = await prisma.application.update({
