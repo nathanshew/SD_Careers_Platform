@@ -1,8 +1,6 @@
-import { Request, Response } from "express";
 import * as client from "openid-client";
 import assert from "assert";
-import loginHandler from "../loginHandler.js";
-import callbackHandler from "../callbackHandler.js";
+
 
 // High-level declarations
 const issuer: string = "https://accounts.google.com";

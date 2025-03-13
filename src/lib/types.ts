@@ -29,3 +29,38 @@ export interface Participant {
     interviewer: string;
     interviewDecision: string;
 }
+
+export type Applicant = {
+  applicant_id: number;
+  username: string;
+  email: string;
+  password: string;
+  applications: Application[];
+};
+
+export type Application = {
+  application_id: number;
+  applicant_id: number;
+  job_id: number;
+  status: 'submitted' | 'shortlisted' | 'rejected';
+  name: string;
+  telegram: string;
+  phone: string;
+  year: number;
+  major: string;
+  faculty: string;
+  linkedin_url?: string;
+  resume_url: string;
+  applicant_desc: string;
+  interview?: Interview;
+};
+
+export type Interview = {
+  interview_id: number;
+  application_id: number;
+  interview_dateTime: Date;
+  interview_URL: string;
+  interview_decision?: string;
+  interview_notes?: string;
+  status: 'scheduled' | 'completed' | 'canceled';
+};

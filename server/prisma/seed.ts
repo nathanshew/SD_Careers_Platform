@@ -1,5 +1,5 @@
 import { PrismaClient, JobStatus, InterviewStatus, ApplicationStatus } from '@prisma/client';
-
+import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 
@@ -47,7 +47,7 @@ async function populate_admin() {
     create: {
       username: 'admin',
       email: 'admin@example.com',
-      password: 'admin@123456789'
+      password: await bcrypt.hash('admin@123456789', 10)
     }
   });
   console.log({ admin });
@@ -60,7 +60,7 @@ async function populate_applicant() {
     create: {
       username: 'joe',
       email: 'joe@gmail.com',
-      password: 'joe@123456789'
+      password: await bcrypt.hash('joe@123456789', 10)
     }
   });
   console.log({ applicant });
