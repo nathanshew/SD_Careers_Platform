@@ -165,6 +165,7 @@ router.post(
   }
 );
 
+// Verify Auth (to verify confirmation code)
 router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) => {
   logRequest(req);
   try {
@@ -206,6 +207,7 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
   }
 });
 
+// Verified Signup Auth
 router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Response) => {
   logRequest(req);
   try {
@@ -233,7 +235,11 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
     });
 
     console.log(`Applicant created with ID: ${applicant.applicant_id}`);
-    const payload: JwtPayload = { email, role: APPLICANT_ROLE };
+    const payload: JwtPayload = { 
+      email: email, 
+      role: APPLICANT_ROLE,
+      applicant_id: applicant.applicant_id
+     };
     const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
     res.status(201).json({ message: "Verified sign-up successful", token, ...applicantSerializer(applicant) });
     req.session.destroy(() => {}); // Clean up the session after use
@@ -251,6 +257,7 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
   }
 });
 
+// Manual Signin Auth
 router.post("/signin", async (req: Request, res: Response) => {
   logRequest(req);
   try {
@@ -273,10 +280,18 @@ router.post("/signin", async (req: Request, res: Response) => {
           return;
       }
 
-      const payload: JwtPayload = { email: validatedData.email, role: APPLICANT_ROLE };
+      const payload: JwtPayload = { 
+        email: validatedData.email, 
+        role: APPLICANT_ROLE,
+        applicant_id: existingApplicant.applicant_id
+      };
       const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
       console.log(`${existingApplicant.username} signin successful`);
-      res.status(200).json({ message: "Signin successful", token, ...applicantSerializer(existingApplicant) });
+      res.status(200).json({ 
+        message: "Signin successful", 
+        token, ...applicantSerializer(existingApplicant),
+        role: APPLICANT_ROLE
+      });
 
   } catch (error) {
       console.error("Error logging in:", error);

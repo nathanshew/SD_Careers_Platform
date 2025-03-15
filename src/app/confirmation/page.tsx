@@ -1,56 +1,20 @@
 "use client";
 
 import checkmark from "@/app/components/confirmation/checkmark.png";
-import React, { useState, useEffect } from "react";
+import React, {  } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import getCookie from "@/utils/getCookie";
+import Link from "next/link";
 
 export default function ConfirmationPage() {
   const searchParams = useSearchParams();
   const jobTitle = searchParams.get("jobTitle");
   const department = searchParams.get("department");
   const semester = searchParams.get("semester");
-  const [username, setUsername] = useState<string | null>(null);
 
-  useEffect(() => {
-    setUsername(getCookie("username"));
-  }, []);
+
   return (
     <div className="min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-
-      {/* Header Area */}
-      <header className="flex justify-between items-center mb-8">
-        <div className="flex items-center">
-          <Image
-            src="/Fintech Logo.svg"
-            alt="Fintech Society Logo"
-            width={50}
-            height={50}
-          />
-          <nav className="ml-8">
-            <a href="/" className="mr-4">
-              Home
-            </a>
-            <a href="/search-roles" className="mr-4">
-              Search Roles
-            </a>
-            <a href="/apply" className="mr-4">
-              Apply
-            </a>
-            <a href="/about-us">About Us</a>
-          </nav>
-        </div>{" "}
-        {username ? (
-           <div>
-           Welcome Back{" "}
-           <span className="text-blue-900 font-semibold">{username}</span>!
-         </div>
-        ) : (
-          <></>
-        )}
-      </header>
-
 
       {/* Job Role Title */}
       <section className="text-center mb-8">
@@ -75,9 +39,11 @@ export default function ConfirmationPage() {
         </h2>
       </div>
       <div className="flex items-center justify-center space-x-4 mt-8">
-        <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300">
-          Return to dashboard
-        </button>
+        <Link href="/applicant">
+          <button className="bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300">
+            Return to dashboard
+          </button>
+        </Link>
       </div>
     </div>
   );

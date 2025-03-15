@@ -46,9 +46,6 @@ export default function VerifiedPage() {
           }),
         }
       );
-      console.log("BRUHHHH")
-
-      console.log(response)
 
       const data = await handleResponse(response);
       if (!data.token || !data.username || !data.email) {
@@ -64,6 +61,7 @@ export default function VerifiedPage() {
         data.username
       )}; path=/;`;
       document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
+      document.cookie = `role=${encodeURIComponent(data.role)}; path=/;`;
 
       console.log(`${username} signed-up successfully`);
       router.push("/");
