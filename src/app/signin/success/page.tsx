@@ -8,7 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 export default function SignInSuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const [isCookiesSet, setIsCookiesSet] = useState<boolean>(false);
 
   useEffect(() => {

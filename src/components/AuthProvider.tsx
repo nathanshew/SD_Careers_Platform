@@ -13,7 +13,7 @@ type AuthContextType = {
 // Create context with default values
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  setIsAuthenticated: (bool: boolean) => {},
+  setIsAuthenticated: () => {},
 });
 
 // Hook to use the auth context

@@ -9,7 +9,7 @@ import React from "react";
 export default function VerifiedPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
