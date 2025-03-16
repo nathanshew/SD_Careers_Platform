@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Applicant } from '@prisma/client';
-import { signUpSchema, loginSchema, verifySchema } from "../validators/auth.js";
+import { signUpSchema, loginSchema, verifySchema, verifiedSignUpSchema } from "../validators/auth.js";
 import { logRequest } from "../utils/logUtil.js";
 import { generateVerificationCode } from "../utils/authUtil.js";
 import { applicantSerializer } from "../serializers/applicant.js";
@@ -133,7 +133,6 @@ router.post(
           code: code,
           username: validatedData.username,
           email: validatedData.email,
-          hashed_password: await bcrypt.hash(validatedData.password, 10),
         };
         const htmlMessage = `
             <h2>Your verification number is: <strong>${code}</strong></h2>
@@ -150,7 +149,7 @@ router.post(
         await transporter.sendMail(mailOptions);
 
         console.log(`Verification email sent to ${validatedData.email}`);
-        res.status(250).end();
+        res.status(250).json({ message: "Verification email sent" });
       } catch (error) {
         if (error instanceof yup.ValidationError) {
           // If validation fails
@@ -180,23 +179,19 @@ router.post("/verify", sessionMiddleware,  async (req: Request, res: Response) =
       return;
     }
 
-    const { code: storedCode, username, email, hashed_password } = req.session.verificationData;
+    const { code: storedCode, username, email } = req.session.verificationData;
 
     if (validatedData.code !== storedCode) {
       res.status(400).json({ error: "Invalid verification code" });
       return;
     }
 
-    console.log(`Creating applicant in the database`);
-    const applicant = await prisma.applicant.create({
-        data: { username, email, password: hashed_password },
-    });
+    // Set the verified data for the next step
+    req.session.verifiedData = { username, email };
 
-    console.log(`Applicant created with ID: ${applicant.applicant_id}`);
-    const payload: JwtPayload = { email, role: APPLICANT_ROLE };
-    const token = jwt.sign(payload, jwt_secret, { noTimestamp: true });
-    res.status(201).json({ message: "Verification successful", token, ...applicantSerializer(applicant) });
-    req.session.destroy(() => {}); // Clean up the session after use
+    // Return success without creating the user yet
+    res.status(200).json({ message: "Verification successful" });
+  
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       // If validation fails
@@ -215,7 +210,7 @@ router.post("/verifiedSignup", sessionMiddleware,  async (req: Request, res: Res
   logRequest(req);
   try {
     console.log(`Validating input data`);
-    const validatedData = await signUpSchema.validate(req.body, {
+    const validatedData = await verifiedSignUpSchema.validate(req.body, {
       abortEarly: false,
       stripUnknown: true, 
     });

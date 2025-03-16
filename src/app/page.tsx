@@ -47,6 +47,9 @@ export default function JobApplication() {
           <Image
             src={excoPic}
             alt="Exco Picture"
+            width={1020}
+            height={400}
+            priority
             className="object-cover w-full h-full"
           />
           <div className="absolute inset-0 flex items-end justify-center pb-4">
