@@ -3,11 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { handleResponse } from "@/utils/handleResponse";
+import { useAuth } from "@/components/AuthProvider";
 import React from "react";
 
 export default function VerifiedPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,9 +21,6 @@ export default function VerifiedPage() {
     e.preventDefault();
     setError(null);
 
-    console.log("BRAHEHEHEHE")
-    console.log()
-
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -29,7 +28,6 @@ export default function VerifiedPage() {
 
     setLoading(true);
     try {
-      console.log()
       console.log("Signing up...");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/verifiedSignup`,
@@ -46,9 +44,6 @@ export default function VerifiedPage() {
           }),
         }
       );
-      console.log("BRUHHHH")
-
-      console.log(response)
 
       const data = await handleResponse(response);
       if (!data.token || !data.username || !data.email) {
@@ -65,6 +60,7 @@ export default function VerifiedPage() {
       )}; path=/;`;
       document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
       document.cookie = `role=${encodeURIComponent(data.role)}; path=/;`;
+      setIsAuthenticated(true);
 
       console.log(`${username} signed-up successfully`);
       router.push("/");

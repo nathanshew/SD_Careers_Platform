@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function SignInSuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [isCookiesSet, setIsCookiesSet] = useState<boolean>(false);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export default function SignInSuccessPage() {
     document.cookie = `email=${encodeURIComponent(email)}; path=/;`;
 
     console.log(`${username} logged in successfully`);
+    setIsAuthenticated(true);
     setIsCookiesSet(true);
 
     const timer = setTimeout(() => {

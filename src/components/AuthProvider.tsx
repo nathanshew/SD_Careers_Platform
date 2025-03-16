@@ -1,4 +1,4 @@
-"use client"; // Important: mark as client component
+"use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -8,14 +8,12 @@ import getCookie from '@/utils/getCookie';
 type AuthContextType = {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
-  loading: boolean;
 };
 
 // Create context with default values
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   setIsAuthenticated: (bool: boolean) => {},
-  loading: true
 });
 
 // Hook to use the auth context
@@ -52,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated}}>
       {children}
     </AuthContext.Provider>
   );

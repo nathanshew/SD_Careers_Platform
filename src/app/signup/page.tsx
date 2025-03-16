@@ -33,11 +33,8 @@ export default function SignUpPage() {
                 }),
             });
         
-            const data = await handleResponse(response)
-            console.log(data)
-            console.log("SIGN UP SUCCESS")
+            await handleResponse(response)
             
-            // TODO: Redirect to verification code page
             // Redirect to signup/verified/page.tsx
             router.push(`/signup/verification?username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`);
         } catch (error) {

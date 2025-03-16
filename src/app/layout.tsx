@@ -55,16 +55,13 @@ export default function RootLayout({
           ${geistMono.variable}
         antialiased`}
       >
-        <Navbar />
-          <ReactQueryClientProvider>
-            <AuthProvider>
+        <AuthProvider>
+          <Navbar />
+            <ReactQueryClientProvider>
               {children}
-            </AuthProvider>
           </ReactQueryClientProvider>
-        <Footer />
-        
-       
-
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
