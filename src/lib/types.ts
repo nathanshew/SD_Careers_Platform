@@ -64,3 +64,36 @@ export type Interview = {
   interview_notes?: string;
   status: 'scheduled' | 'completed' | 'canceled';
 };
+
+
+// For the department nested object
+export interface DepartmentData {
+  department_name: string;
+}
+
+// For the job nested object
+export interface JobDetails {
+  title: string;
+  department: DepartmentData;
+  description: string;
+  deadline: Date;
+  status: string; // "open" | "closed"
+}
+
+// For the complete application data
+export interface ApplicationData {
+  application_id: number;
+  applicant_id: number;
+  job_id: number;
+  status: "submitted" | "shortlisted" | "rejected"; // "submitted" | "shortlisted" | "rejected"
+  name: string;
+  telegram: string;
+  phone: string;
+  year: number;
+  major: string;
+  faculty: string;
+  linkedin_url?: string; // Optional
+  resume_url: string;
+  applicant_desc: string;
+  job: JobDetails;
+}

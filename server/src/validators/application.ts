@@ -1,11 +1,6 @@
 import * as yup from 'yup';
 
 export const createApplicationSchema = yup.object().shape({
-    applicant_id: yup
-        .number()
-        .integer()
-        .positive()
-        .required('Applicant ID is required'),
     job_id: yup
         .number()
         .integer()

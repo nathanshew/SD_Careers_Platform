@@ -54,6 +54,7 @@ export default function SignInPage() {
         data.username
       )}; path=/;`;
       document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
+      document.cookie = `role=${encodeURIComponent(data.role)}; path=/;`;
 
       console.log(`${data.username} signed-up successfully`);
       router.push("/");

@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { frontEndApplicationSchema } from "@/lib/validation/applicationSchema";
 import { ValidationError } from "yup";
 import { handleResponse } from "@/utils/handleResponse";
+import getCookie from "@/utils/getCookie";
 
 export default function JobApplication() {
     const params = useParams();
@@ -105,13 +106,12 @@ function Application(jobData: Job) {
     event.preventDefault();
 
     const newApplication = {
-      applicant_id: 1, // Hardcoded for now, replace with actual user ID
       job_id: jobData.job_id,
       status: "submitted", // Default status for new applications, change if needed
       name: fullName,
       telegram: telegramHandle,
       phone: phoneNumber,
-      year: yearOfStudy ? Number(yearOfStudy) : 0,
+      year: yearOfStudy ? Number(yearOfStudy) : 1,
       major: major,
       faculty: faculty,
       linkedin_url: linkedinUrl,
@@ -128,6 +128,7 @@ function Application(jobData: Job) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${getCookie('token')}`
         },
         body: JSON.stringify(newApplication),
       });
@@ -242,7 +243,6 @@ function Application(jobData: Job) {
           value={linkedinUrl}
           onChange={(e) => setLinkedinUrl(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
-          required
         />
         {errors.linkedin_url && <p className="text-red-600 text-sm">{errors.linkedin_url}</p>}
       </div>
