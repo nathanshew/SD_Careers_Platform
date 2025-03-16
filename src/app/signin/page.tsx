@@ -10,7 +10,7 @@ import { useAuth } from "@/components/AuthProvider";
 
 export default function SignInPage() {
   const router = useRouter();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated } = useAuth();
   const [redirectToFrontend, setRedirectToFrontend] = useState<string>("");
   const [
     redirectToFrontendVerifiedSignup,
