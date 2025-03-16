@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaLinkedin } from "react-icons/fa";
 import { handleResponse } from "@/utils/handleResponse";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function SignInPage() {
   const router = useRouter();
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const [redirectToFrontend, setRedirectToFrontend] = useState<string>("");
   const [
     redirectToFrontendVerifiedSignup,
@@ -55,8 +57,9 @@ export default function SignInPage() {
       )}; path=/;`;
       document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
       document.cookie = `role=${encodeURIComponent(data.role)}; path=/;`;
+      setIsAuthenticated(true);
 
-      console.log(`${data.username} signed-up successfully`);
+      console.log(`${data.username} signed-in successfully`);
       router.push("/");
     } catch (error) {
       if (error instanceof Error) {

@@ -1,31 +1,23 @@
-"use client"; // Important: mark as client component
+"use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import getCookie from '@/utils/getCookie';
 
 // Auth context type
 type AuthContextType = {
   isAuthenticated: boolean;
-  loading: boolean;
+  setIsAuthenticated: (value: boolean) => void;
 };
 
 // Create context with default values
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  loading: true
+  setIsAuthenticated: (bool: boolean) => {},
 });
 
 // Hook to use the auth context
 export const useAuth = () => useContext(AuthContext);
-
-// You already have this function in your layout.tsx
-function getCookie(name: string) {
-  if (typeof document === 'undefined') return undefined;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift();
-  return undefined;
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated}}>
       {children}
     </AuthContext.Provider>
   );
