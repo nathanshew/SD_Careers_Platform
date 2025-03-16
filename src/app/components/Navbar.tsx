@@ -11,7 +11,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -19,6 +19,8 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
     const pathName = usePathname();
+    const [isSignedIn, setIsSignedIn] = useState<boolean>(true);
+    
     const navigation = [
         { name: "Home", href: "/", current: pathName.endsWith("home") },
         {
@@ -27,6 +29,13 @@ export default function Navbar() {
             current: pathName.endsWith("about-us"),
         },
     ];
+
+    const handleSignOut = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
 
     return (
         <Disclosure as="nav" className="bg-blue-950 font-body">
@@ -115,7 +124,7 @@ export default function Navbar() {
                                 </MenuItem>
                                 <MenuItem>
                                     <a
-                                        href="#"
+                                        onClick={handleSignOut}
                                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                                     >
                                         Sign out
