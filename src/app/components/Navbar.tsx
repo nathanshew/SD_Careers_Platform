@@ -11,6 +11,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
@@ -19,12 +20,10 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
     const pathName = usePathname();
     const navigation = [
-        { name: "Home", href: "/home", current: pathName.endsWith("home") },
-        { name: "Roles", href: "/roles", current: pathName.endsWith("roles") },
-        { name: "Apply", href: "/apply", current: pathName.endsWith("apply") },
+        { name: "Home", href: "/", current: pathName.endsWith("home") },
         {
             name: "About Us",
-            href: "/about-us",
+            href: "https://fintechsociety.comp.nus.edu.sg/",
             current: pathName.endsWith("about-us"),
         },
     ];
@@ -100,7 +99,7 @@ export default function Navbar() {
                             >
                                 <MenuItem>
                                     <a
-                                        href="#"
+                                        href="/applicant"
                                         className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100"
                                     >
                                         Profile

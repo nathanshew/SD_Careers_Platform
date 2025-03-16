@@ -1,47 +1,8 @@
 "use client";
-import { Participant } from "@/lib/types";
-import React, { useState, useEffect } from "react";
-
-const mockParticipants: Participant[] = [
-  {
-    name: "John Doe",
-    status: "Pending",
-    positionApplied: "Software Engineer",
-    department: "SD",
-    yearOfStudy: "4",
-    major: "Computer Science",
-    faculty: "School of Computing",
-    linkedInUrl: "https://linkedin.com/in/johndoe",
-    resumeLink: "https://example.com/resume",
-    whyNFS: "Passionate about fintech and innovation",
-    interviewDate: "2024-12-01",
-    interviewer: "Jane Smith",
-    interviewDecision: "scheduled",
-  },
-  {
-    name: "Jamie Oliver",
-    status: "Rejected",
-    positionApplied: "Quant",
-    department: "Quant",
-    yearOfStudy: "4",
-    major: "Computer Science",
-    faculty: "School of Computing",
-    linkedInUrl: "https://linkedin.com/in/johndoe",
-    resumeLink: "https://example.com/resume",
-    whyNFS: "Passionate about fintech and innovation",
-    interviewDate: "2024-12-01",
-    interviewer: "Jane Smith",
-    interviewDecision: "scheduled",
-  },
-];
-
-const fetchParticipants = (): Promise<Participant[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockParticipants);
-    }, 1000);
-  });
-};
+import { Application, Participant } from "@/lib/types";
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import { handleResponse } from "@/utils/handleResponse";
 
 // get all department names
 const departments = [
@@ -58,23 +19,19 @@ const departments = [
 At this stage, filtering applicants is handled by frontend. 
 */
 export default function AdminDashboardOverviewPage() {
-  const [participants, setParticipants] = useState<Participant[] | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [selectedDepartment, setSelectedDepartment] = useState<string>(departments[0]);
   const [selectedPositionTitle, setSelectedPositionTitle] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  useEffect(() => {
-    fetchParticipants()
-      .then((data) => {
-        setParticipants(data);
-        setLoading(false);
-      })
-      .catch(() => {
-        setParticipants(null);
-        setLoading(false);
-      });
-  }, []);
+  // Fetch applicants data
+  const { data: applications, isLoading: isLoadingApplications, isError: isErrorApplications } = useQuery(
+    ["applications"],
+    async () => {
+      console.log(`fetching applicants from: ${process.env.NEXT_PUBLIC_API_URL}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/application`);
+      return (await handleResponse(response));
+    }
+  );
 
   function handleSelectDepartment(event: React.MouseEvent<HTMLDivElement>) {
     const target = event.target as HTMLElement;
@@ -130,21 +87,15 @@ export default function AdminDashboardOverviewPage() {
     return filterByDepartment && filterByPositionTitle && filterByStatus;
   }
 
-  if (loading) {
+  // Handle loading and error states
+  if (isLoadingApplications) {
     return (
       <div className="min-h-screen flex justify-center items-center">
-        <p className="text-2xl">Loading participant data...</p>
+        <p className="text-2xl">Loading data...</p>
       </div>
     );
   }
-
-  if (!participants) {
-    return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p className="text-2xl text-red-500">No participant data available.</p>
-      </div>
-    );
-  }
+  if (isErrorApplications) return <div>Error fetching applicants data</div>;
 
   return (
     <div className="min-h-screen flex flex-col font-sans text-sm md:text-base mx-10 md:mx-36">
@@ -167,16 +118,16 @@ export default function AdminDashboardOverviewPage() {
         />
       </div>
       <div className="mb-10 h-fit flex flex-col gap-3">
-        {participants
+        {applications
           .filter(filterParticipant)
-          .map((participant, index) =>
+          .map((application: Application, index: number) =>
             <div
               key={index}
               className="bg-gray-300 text-black rounded-xl px-10 py-4 font-body grid grid-cols-3 w-full items-center place-content-between"
             >
-              <div className="text-left">{participant.name}</div>
-              <div className="text-center">{participant.positionApplied}</div>
-              <div className="text-right">{renderApplicationStatus(participant.status)}</div>
+              <div className="text-left">{application.name}</div>
+              <div className="text-center">{application.job_id}</div>
+              <div className="text-right">{renderApplicationStatus(application.status)}</div>
             </div>
           )}
       </div>

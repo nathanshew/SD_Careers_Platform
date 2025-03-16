@@ -3,23 +3,21 @@
 import { useState } from "react";
 import Link from "next/link";
 import { handleResponse } from "@/utils/handleResponse";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 export default function SignUpPage() {
+
+    const router = useRouter();
+
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState<string|null>(null);
     const [loading, setLoading] = useState(false);
     
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
-        
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
         
         setLoading(true);
         try {
@@ -32,15 +30,19 @@ export default function SignUpPage() {
                 body: JSON.stringify({
                     username,
                     email,
-                    password,
                 }),
             });
-            
+        
             const data = await handleResponse(response)
             console.log(data)
+            console.log("SIGN UP SUCCESS")
             
             // TODO: Redirect to verification code page
+            // Redirect to signup/verified/page.tsx
+            router.push(`/signup/verification?username=${encodeURIComponent(username)}&email=${encodeURIComponent(email)}`);
         } catch (error) {
+            console.log(error)
+            console.log("SIGN UP ERROR")
             if (error instanceof Error) {
                 setError(error.message);
             } else {
@@ -76,28 +78,6 @@ export default function SignUpPage() {
                         onChange={(e) => setUsername(e.target.value)}
                         required
                         className="w-3/5 rounded-2xl border-gray-200 bg-gray-200 focus:ring-blue-900 focus:border-blue-900"
-                    />
-                </div>
-                <div className="flex w-full items-center gap-4 pb-3">
-                    <label htmlFor="password" className="w-1/4 text-left">Password</label>
-                    <input
-                        id="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="w-3/5 rounded-2xl border-gray-200 bg-gray-200 focus:ring-blue-900 focus:border-blue-900"
-                    />
-                </div>
-                <div className="flex w-full items-center gap-4">
-                    <label htmlFor="confirmpassword" className="w-1/4 text-left">Confirm Password</label>
-                    <input
-                        id="confirmpassword"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        className="w-3/5 rounded-2xl border-gray-200 bg-gray-200  focus:ring-blue-900 focus:border-blue-900"
                     />
                 </div>
                 {error && <p className="text-red-600 text-center mt-3 font-medium">{error}</p>}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { handleResponse } from "@/utils/handleResponse";
+import React from "react";
 
 export default function VerifiedPage() {
   const router = useRouter();
@@ -18,6 +19,9 @@ export default function VerifiedPage() {
     e.preventDefault();
     setError(null);
 
+    console.log("BRAHEHEHEHE")
+    console.log()
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -25,6 +29,8 @@ export default function VerifiedPage() {
 
     setLoading(true);
     try {
+      console.log()
+      console.log("Signing up...");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/verifiedSignup`,
         {
@@ -55,6 +61,7 @@ export default function VerifiedPage() {
         data.username
       )}; path=/;`;
       document.cookie = `email=${encodeURIComponent(data.email)}; path=/;`;
+      document.cookie = `role=${encodeURIComponent(data.role)}; path=/;`;
 
       console.log(`${username} signed-up successfully`);
       router.push("/");

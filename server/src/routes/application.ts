@@ -2,13 +2,15 @@ import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import { createApplicationSchema, editApplicationSchema } from "../validators/application.js";
 import { logRequest } from "../utils/logUtil.js";
+import jwtMiddleware from "../middleware/jwtMiddleware.js";
 import * as yup from 'yup';
+import { APPLICANT_ROLE } from "../constants.js";
 
 const prisma = new PrismaClient();
 const router = Router();
 
 // Create a new application
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", jwtMiddleware, async (req: Request, res: Response) => {
   logRequest(req);
   try {
     console.log(`Validating input data`);
@@ -17,9 +19,22 @@ router.post("/", async (req: Request, res: Response) => {
       stripUnknown: true, 
     });
 
-    console.log(`Creating application with Job id: ${validatedData.job_id} and Application id: ${validatedData.applicant_id}`);
+    // Check that user is an applicant
+    console.log(res.locals.role);
+    if (res.locals.role != APPLICANT_ROLE) {
+      res.status(401).json({ error: "Only applicants can create applications" });
+      return;
+    }
+
+    // Check that applicant is logged in as the applicant_id in the application
+    const applicant_id = res.locals.sender_id;
+
+    console.log(`Creating application with Job id: ${validatedData.job_id} by applicant with ID: ${applicant_id}`);
     const application = await prisma.application.create({
-      data: validatedData,
+      data: {
+        ...validatedData,
+        applicant_id, // Use the applicant_id from the JWT token
+      }
     });
 
     console.log(`Application created with ID: ${application.application_id}`);
@@ -51,6 +66,45 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
+// Get all applications for an authenticated user
+router.get("/my-applications", jwtMiddleware, async (req: Request, res: Response) => {
+  logRequest(req);
+  try {
+
+    // Check that user is an applicant
+    if (res.locals.role != APPLICANT_ROLE) {
+      res.status(401).json({ error: "Only applicants can view their applications" });
+      return;
+    }
+
+    const applicant_id = res.locals.sender_id;
+
+    console.log(`Fetching all applications for applicant with ID: ${applicant_id}`);
+    const applications = await prisma.application.findMany({
+      where: { applicant_id },
+      include: {
+        job: {
+          select: {
+            title: true,
+            department: {
+              select: {
+                department_name: true,
+              }
+            },
+            description: true,
+            deadline: true,
+            status: true,
+          }
+        },
+      }
+    });
+    res.json(applications);
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    res.status(500).json({ error: "Error fetching applications" });
+  }
+});
+
 // Get a single application by ID
 router.get("/:id", async (req: Request, res: Response) => {
   logRequest(req);
@@ -74,7 +128,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update an application by ID
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", jwtMiddleware, async (req: Request, res: Response) => {
   logRequest(req);
   const { id } = req.params;
   try {
@@ -83,6 +137,22 @@ router.put("/:id", async (req: Request, res: Response) => {
       abortEarly: false,
       stripUnknown: true, 
     });
+
+    console.log(`Validating application id`);
+    const application = await prisma.application.findUnique({
+      where: { application_id: Number(id) },
+    });
+
+    if (!application) {
+      res.status(404).json({ error: "Application id not found" });
+      return;
+    }
+
+    console.log(`Validating sender id`);
+    if (res.locals.role != APPLICANT_ROLE || res.locals.sender_id != application.applicant_id) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
     console.log(`Updating application with ID: ${id}`);
     const updatedApplicant = await prisma.application.update({
