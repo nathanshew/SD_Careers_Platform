@@ -22,17 +22,17 @@ export default function AdminDashboardPage() {
     );
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center font-sans">
-            <div className="flex flex-row w-full max-w-6xl p-4 items-start">
+        <div className="min-h-screen flex flex-col items-center justify-center font-body">
+            <div className="flex flex-col lg:flex-row w-full max-w-6xl p-4 items-start">
                 <button
                     type="button"
-                    className="font-bold bg-blue-900 text-white rounded-full py-2 px-6 mr-24 mt-12"
+                    className="font-bold bg-blue-900 text-white rounded-full py-2 px-6 mr-24 mt-12 min-w-36"
                     onClick={() => window.history.back()}
                 >
                     &lt; Back
                 </button>
                 <div className="flex flex-col gap-6 p-8 w-full max-w-4xl border border-gray-200 shadow-md rounded-lg bg-white mb-12 mt-12">
-                    <h2 className="text-4xl font-extrabold text-blue-900 mb-6">Create Listing</h2>
+                    <h2 className="text-4xl font-extrabold text-blue-900 mb-6 font-header">Create Listing</h2>
                     <div className="grid grid-cols-1 gap-6">
                         {renderDetail('Title:')}
                         {renderTextAreaDetail('Role Description:')}
