@@ -21,7 +21,6 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -30,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for token in cookies
     const token = getCookie('token');
     setIsAuthenticated(!!token);
-    setLoading(false);
     
     // Handle redirect URL if coming from middleware redirect
     const redirectUrl = searchParams.get('redirectUrl');
@@ -39,15 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     
     // Protect routes (optional, can also be done with middleware)
-    if (!loading && !isAuthenticated && pathname.startsWith('/positions')) {
+    if (!isAuthenticated && pathname.startsWith('/positions')) {
       router.push(`/signin?redirectUrl=${pathname}`);
     }
-  }, [isAuthenticated, loading, pathname, router, searchParams]);
-
-  // Loading state
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  }, [isAuthenticated, pathname, router, searchParams]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated}}>

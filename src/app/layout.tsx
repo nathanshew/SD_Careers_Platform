@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-import React from "react";
+import React, { Suspense } from "react";
 
 import { Montserrat, Roboto } from "next/font/google";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+import Fallback from "./components/Fallback";
 import ReactQueryClientProvider from "@/components/ReactQueryClientProvider";
 
 import { AuthProvider } from "@/components/AuthProvider";
@@ -55,13 +56,15 @@ export default function RootLayout({
           ${geistMono.variable}
         antialiased`}
       >
-        <AuthProvider>
-          <Navbar />
-            <ReactQueryClientProvider>
-              {children}
-          </ReactQueryClientProvider>
-          <Footer />
-        </AuthProvider>
+        <Suspense fallback={<Fallback />}>
+          <AuthProvider>
+            <Navbar />
+              <ReactQueryClientProvider>
+                {children}
+              </ReactQueryClientProvider>
+            <Footer />
+          </AuthProvider>
+        </Suspense>
       </body>
     </html>
   );
