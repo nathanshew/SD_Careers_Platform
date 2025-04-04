@@ -11,6 +11,7 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React from "react";
 
@@ -62,10 +63,11 @@ export default function Navbar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
-              <img
+              <Image
                 alt="NUS Fintech Society Logo"
-                src="https://fintechsociety.comp.nus.edu.sg/_next/image?url=%2Fimages%2Ffintechsoc-logo.png&w=1920&q=100"
-                className="h-16 w-auto"
+                src="/fintechsoc-logo.png"
+                width={192}
+                height={64}
               />
             </div>
           </div>
@@ -95,10 +97,12 @@ export default function Navbar() {
                 <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
-                  <img
+                  <Image
                     alt="User Profile Picture"
-                    src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-                    className="h-8 w-8 rounded-full"
+                    src="/Portrait_Placeholder.png"
+                    height={32}
+                    width={32}
+                    className="rounded-full"
                   />
                 </MenuButton>
               </div>
