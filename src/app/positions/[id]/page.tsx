@@ -39,7 +39,7 @@ export default function JobApplication() {
         <section className="text-center mb-8 flex flex-col items-center justify-center">
             <div className="font-header md:text-[48px] text-[32px] font-bold">{jobData.title}</div>
             <div className="text-sm sm:text-base lg:text-xl bg-gray-200 text-gray-600 rounded-full mt-4 px-16 py-2 w-fit shadow-lg">
-              {jobData.department.department_name}  |  {jobData.semester}  |  {jobData.positionsAvailable}
+              {jobData.department.department_name}  |  {jobData.semester}  |  {jobData.positionsAvailable}{" Positions Avaliable"} 
             </div>
         </section>
 
@@ -77,12 +77,12 @@ function Overview(jobData: Job) {
   return (
   <div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h3 className="font-header text-black">What you will do</h3>
-        <div className="text-gray-700 text-xl">{jobData.description}</div>
+        <h3 className=" text-black text-base lg:font-header lg:text-xl">What you will do</h3>
+        <div className="text-gray-700 text-base lg:text-xl">{jobData.description}</div>
     </div>
     <div className="max-w-lg mx-auto mb-8 p-4 bg-blue-100 rounded">
-        <h3 className="font-header text-black">Who we are looking for</h3>
-        <div className="text-gray-700 text-xl">{jobData.requirements}</div>
+        <h3 className=" text-black text-base lg:font-header lg:text-xl">Who we are looking for</h3>
+        <div className="text-gray-700 text-base lg:text-xl">{jobData.requirements}</div>
     </div>
   </div>
   )
@@ -155,7 +155,7 @@ function Application(jobData: Job) {
   return (
     <form onSubmit={handleSubmit} className="max-w-lg mx-auto font-body md:text-xl text-base">
       <div className="mb-4">
-        <label className="font-header block mb-2">Full Name</label>
+        <label className="font-body lg:font-header block mb-2">Full Name</label>
         <input
           type="text"
           placeholder="e.g. Shawn Tan"
@@ -168,7 +168,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Faculty</label>
+        <label className="font-body lg:font-header block mb-2">Faculty</label>
         <input
           type="text"
           placeholder="e.g. SoC"
@@ -181,7 +181,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Major</label>
+        <label className="font-body lg:font-header block mb-2">Major</label>
         <input
           type="text"
           placeholder="e.g. CS"
@@ -194,7 +194,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Year of Study</label>
+        <label className="font-body lg:font-header block mb-2">Year of Study</label>
         <select
           value={yearOfStudy}
           onChange={(e) => setYearOfStudy(e.target.value)}
@@ -210,7 +210,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Telegram Handle</label>
+        <label className="font-body lg:font-header block mb-2">Telegram Handle</label>
         <input
           type="text"
           placeholder="e.g. @shawn_tan"
@@ -223,7 +223,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Phone Number</label>
+        <label className="font-body lg:font-header block mb-2">Phone Number</label>
         <input
           type="text"
           placeholder="e.g. 23703847"
@@ -236,7 +236,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Linkedin URL</label>
+        <label className="font-body lg:font-header block mb-2">Linkedin URL</label>
         <input
           type="text"
           placeholder="Type here"
@@ -248,7 +248,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Resume link</label>
+        <label className="font-body lg:font-header block mb-2">Resume link</label>
         <input
           type="text"
           placeholder="Type here"
@@ -261,7 +261,7 @@ function Application(jobData: Job) {
       </div>
 
       <div className="mb-4">
-        <label className="font-header block mb-2">Why do you want to join NFS as {jobData.title}?</label>
+        <label className="font-body lg:font-header block mb-2">Why do you want to join NFS as {jobData.title}?</label>
         <input
           type="text"
           placeholder="Type here"
@@ -273,7 +273,7 @@ function Application(jobData: Job) {
         {errors.applicant_desc && <p className="text-red-600 text-sm">{errors.applicant_desc}</p>}
       </div>
 
-      <div className="w-full font-header flex items-center justify-center">
+      <div className="w-full font-body lg:font-header flex items-center justify-center">
         <button type="submit" className="bg-button-orange text-white rounded-full px-10 py-2">
           Submit
         </button>
